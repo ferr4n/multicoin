@@ -1,6 +1,6 @@
 # EN
 ## Multicoin Mining Script
-Mine several coins by sharing your connection.
+Install, reinstall and/or uninstall 11 apps that reward sharing your connection.
 
 Platform: Debian compatible OS on ARM64 architecture
 Languages: English and Spanish
@@ -18,9 +18,10 @@ Access the terminal of your ARM64 Debian-based computer (e.g. Raspberry Pi) and 
 
 3. Follow the on-screen indications
 
+
 # ES
 ## Script de Minado Multimoneda
-Mina diferentes monedas compartiendo la conexión a Internet
+Instala, reinstala y/o desinstala 11 aplicaciones que recompensan compartir Internet.
 
 Platform: Sistema Operativo compatible con Debian y arquitectura ARM64
 Idiomas: Español e Inglés
