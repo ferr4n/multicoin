@@ -3,8 +3,11 @@
 Install, reinstall and/or uninstall 11 apps that reward sharing your connection.
 
 Platform: Debian compatible OS on ARM64 architecture
+
 Languages: English and Spanish
+
 Supported Apps: TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM and BitPing
+
 License: GPLv3
 
 ### Instructions
@@ -24,8 +27,11 @@ Access the terminal of your ARM64 Debian-based computer (e.g. Raspberry Pi) and 
 Instala, reinstala y/o desinstala 11 aplicaciones que recompensan compartir Internet.
 
 Platform: Sistema Operativo compatible con Debian y arquitectura ARM64
+
 Idiomas: Español e Inglés
+
 Aplicaciones: TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM y BitPing
+
 Licencia: GPLv3
 
 ### Instrucciones
