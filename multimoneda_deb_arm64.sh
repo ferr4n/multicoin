@@ -1,8 +1,8 @@
 #!/bin/bash
 #
 # Script de Instalación de MultiMonedas
-# TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM y BitPing
-# Versión: 1.0
+# TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM y BitPing (Meson y Streamr también serán incluidos, MASQ y Grass serán los siguientes)
+# Versión: 1.1
 # Licencia: GPLv3
 #
 
@@ -12,7 +12,8 @@ LOG=/var/log/multimoneda.log
 # Descomente para obtener registro de todos los comandos:
 #exec 1> >(tee $LOG) 2>&1
 
-echo "Instalar (o reinstalar) y desinstalar aplicaciones TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM y BitPing"
+#echo "Instalar (o reinstalar) y desinstalar aplicaciones TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, Meson, Streamr y BitPing"
+echo "Instalar (o reinstalar) y desinstalar aplicaciones TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station y BitPing"
 echo
 echo "Escriba un nombre para diferenciar este dispositivo de otros (sin espacios) y presione enter:"
 read nombre
@@ -50,8 +51,14 @@ fi
 echo
 echo Aplicaciones instaladas actualmente:
 echo
-APPS=`docker ps -a --format '{{.Names}}' | grep 'traffmonetizer\|honeygain\|pawns\|packetstream\|repocket\|proxyrack\|proxylite\|mysterium\|earnfm\|bitping' | tee /dev/tty`
+# Descommente para Streamr (experto):
+#APPS=`docker ps -a --format '{{.Names}}' | grep 'traffmonetizer\|honeygain\|pawns\|packetstream\|repocket\|proxyrack\|proxylite\|mysterium\|earnfm\|fstation\|streamr\|bitping' | tee /dev/tty`
+APPS=`docker ps -a --format '{{.Names}}' | grep 'traffmonetizer\|honeygain\|pawns\|packetstream\|repocket\|proxyrack\|proxylite\|mysterium\|earnfm\|fstation\|bitping' | tee /dev/tty`
+# Descommente para Meson (experto):
+#APPS+=" "`ps axco command|grep meson_cdn|sort -u | tee /dev/tty`
 APPS+=" "`ps axco command|grep earnapp|sort -u | tee /dev/tty`
+# Descommente para Meson (experto):
+#if [[ "$APPS" = "  " ]]; then
 if [[ "$APPS" = " " ]]; then
  echo Aun no hay aplicaciones instaladas.
 fi
@@ -310,7 +317,7 @@ if [[ $inspsmin = "si" ]]; then
  echo Instalando imagen de docker packetstream con el CID $cidps y actualizador watchtowerPS...
  docker stop packetstream >> $LOG 2>&1
  docker rm packetstream >> $LOG 2>&1
- docker run -d --restart unless-stopped --platform linux/arm64 -e CID=$cidps --name packetstream packetstream/psclient:latest >> $LOG 2>&1
+ docker run -de CID=$cidps --restart unless-stopped --platform linux/arm64 --name packetstream packetstream/psclient:latest >> $LOG 2>&1
  docker stop watchtowerPS >> $LOG 2>&1
  docker rm watchtowerPS >> $LOG 2>&1
  docker run -d --restart unless-stopped --name watchtowerPS -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower packetstream watchtowerPS --cleanup --include-stopped --include-restarting --revive-stopped --interval 86440 --scope packetstream >> $LOG 2>&1
@@ -358,7 +365,7 @@ if [[ $insrpmin = "si" ]]; then
  echo Instalando imagen de docker repocket con el email $emailrp y la clave api $apirp y actualizador watchtowerRP...
  docker stop repocket >> $LOG 2>&1
  docker rm repocket >> $LOG 2>&1
- docker run -d --restart unless-stopped --name repocket -e RP_EMAIL=$emailrp -e RP_API_KEY=$apirp repocket/repocket >> $LOG 2>&1
+ docker run -d -e RP_EMAIL=$emailrp -e RP_API_KEY=$apirp --restart unless-stopped --name repocket repocket/repocket >> $LOG 2>&1
  docker stop watchtowerRP >> $LOG 2>&1
  docker rm watchtowerRP >> $LOG 2>&1
  docker run -d --restart unless-stopped --name watchtowerRP -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower repocket watchtowerRP --cleanup --include-stopped --include-restarting --revive-stopped --interval 86450 --scope repocket >> $LOG 2>&1
@@ -407,7 +414,7 @@ if [[ $insprmin = "si" ]]; then
  docker rm proxyrack >> $LOG 2>&1
  cat /dev/urandom | LC_ALL=C tr -dc 'A-F0-9' | dd bs=1 count=64 2>/dev/null > UUID_PR.txt
  export UUID_PR=`cat UUID_PR.txt`
- docker run -d --restart unless-stopped --platform linux/amd64 --name proxyrack --restart unless-stopped -e UUID="$UUID_PR" proxyrack/pop >> $LOG 2>&1
+ docker run -de UUID="$UUID_PR" --restart unless-stopped --platform linux/amd64 --name proxyrack --restart unless-stopped proxyrack/pop >> $LOG 2>&1
  docker stop watchtowerPR >> $LOG 2>&1
  docker rm watchtowerPR >> $LOG 2>&1
  docker run -d --restart unless-stopped --name watchtowerPR -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower proxyrack watchtowerPR --cleanup --include-stopped --include-restarting --revive-stopped --interval 86460 --scope proxyrack >> $LOG 2>&1
@@ -485,10 +492,10 @@ if [[ $insefmin = "si" ]]; then
  echo Es necesario registro previo en https://earn.fm/ref/FRAN6E6B
  echo Cuando lo haya hecho pegue su API Key y pulse enter para continuar.
  read efapi
- echo Instalando la imagen de docker earnfm y el actualizador watchtowerEF....
+ echo Instalando la imagen de docker earnfm y el actualizador watchtowerEF...
  docker stop earnfm >> $LOG 2>&1
  docker rm earnfm >> $LOG 2>&1
- docker run -d --restart unless-stopped -e EARNFM_TOKEN="$efapi" --name earnfm earnfm/earnfm-client:latest >> $LOG 2>&1
+ docker run -de EARNFM_TOKEN="$efapi" --restart unless-stopped --name earnfm earnfm/earnfm-client:latest >> $LOG 2>&1
  docker stop watchtowerEF >> $LOG 2>&1
  docker rm watchtowerEF >> $LOG 2>&1
  docker run -d --restart unless-stopped --name watchtowerEF -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower earnfm watchtowerEF --cleanup --include-stopped --include-restarting --revive-stopped --interval 86480 --scope earnfm >> $LOG 2>&1
@@ -510,9 +517,51 @@ else
  fi
 fi
 
+## Filecoin Station
+echo
+if [[ "$APPS" =~ .*"fstation".* ]]; then
+ echo "Filecoin Station ya estaba instalado ¿Quiere reinstalarlo, por ejemplo para alterar sus parámetros? [si/NO] :"
+else
+ echo "¿Quiere instalar Filecoin Station? [si/NO] :"
+fi
+read insfs
+insfsmin=$(echo $insfs | tr '[:upper:]' '[:lower:]')
+if [[ $insfsmin = "si" ]]; then
+ echo Es necesario tener el token FIL en la red Polygon de su billetera Ethereum, puede enlazarla usando la web chainlist.org
+ echo Cuando lo haya hecho pegue la dirección de su billetera y pulse enter para continuar.
+ read fswallet
+ echo Instalando la imagen de docker fstation y el actualizador watchtowerFS...
+ docker stop fstation >> $LOG 2>&1
+ docker rm fstation >> $LOG 2>&1
+ docker run -de FIL_WALLET_ADDRESS="$fswallet" --restart unless-stopped --name fstation ghcr.io/filecoin-station/core >> $LOG 2>&1
+ docker stop watchtowerFS >> $LOG 2>&1
+ docker rm watchtowerFS >> $LOG 2>&1
+ docker run -d --restart unless-stopped --name watchtowerFS -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower fstation watchtowerFS --cleanup --include-stopped --include-restarting --revive-stopped --interval 86490 --scope fstation >> $LOG 2>&1
+ echo Filecoin Station instalado.
+else
+ if [[ "$APPS" =~ .*"fstation".* ]]; then
+  echo "¿Quiere eliminar completamente Filecoin Station? [si/NO] :"
+  read desinsfs
+  desinsfsmin=$(echo $desinsfs | tr '[:upper:]' '[:lower:]')
+  if [[ $desinsfsmin = "si" ]]; then
+   echo Desinstalando imagen de docker fstation y actualizador watchtowerFS...
+   docker stop fstation >> $LOG 2>&1
+   docker rm fstation >> $LOG 2>&1
+   docker rmi ghcr.io/filecoin-station/core >> $LOG 2>&1
+   docker stop watchtowerFS >> $LOG 2>&1
+   docker rm watchtowerFS >> $LOG 2>&1
+   echo Filecoin Station desinstalado.
+  fi
+ fi
+fi
+
 ## Meson: NO LO INSTALAMOS POR ESTAR EN BETA
 #echo
-#echo "¿Quiere instalar (o reinstalar) Meson? [si/NO] :"
+#if [[ "$APPS" =~ .*"meson_cdn".* ]]; then
+# echo "Meson ya estaba instalado ¿Quiere reinstalarlo, por ejemplo para alterar sus parámetros? [si/NO] :"
+#else
+# echo "¿Quiere instalar (o reinstalar) Meson? [si/NO] :"
+#fi
 #read insms
 #insmsmin=$(echo $insms | tr '[:upper:]' '[:lower:]')
 #if [[ $insmsmin = "si" ]]; then
@@ -552,6 +601,64 @@ fi
 # fi
 #fi
 
+## Streamr: NO LO INSTALAMOS POR ESTAR EN BETA
+#echo
+#if [[ "$APPS" =~ .*"streamr".* ]]; then
+# echo "Streamr ya estaba instalado ¿Quiere reinstalarlo, por ejemplo para alterar sus parámetros? [si/NO] :"
+#else
+# echo "¿Quiere instalar Streamr? [si/NO] :"
+#fi
+#read inss
+#inssmin=$(echo $inss | tr '[:upper:]' '[:lower:]')
+#if [[ $inssmin = "si" ]]; then
+# echo Es necesario tener una dirección IP pública y un puerto TCP abierto (por defecto es el 32200)
+# echo "Escriba el puerto que desea utilizar [32200] :"
+# read sport
+# if [[ $sport == "" ]]; then
+#  sports=32200
+# fi
+# echo "Por favor siga las instrucciones en pantalla para inicializar al app Streamr."
+# echo "Si tiene una billetera Ethereum puede desea usarla con Streamr, pero le recomendamos generar una."
+# echo "Si quiere recibir recompensas escoja Streamr 1.0 testnet + Polygon (en vez de Mumbai)"
+# echo "Aquí tiene la documentación sobre los Sponsorships (patrocinios): https://docs.streamr.network/streamr-network/incentives/stream-sponsorships"
+# echo "Para tener una dirección de operador (Operator Address) es necesario conectar su billetera en https://streamr.network/hub/network/operators"
+# echo "Una vez hecho eso pulsamos en Become an Operator, recomendamos poner 10% en Owner's cut percentage y dejar el factor de redundancia en 2"
+# echo "Cuando haya puesto resto de datos y aceptado cambiar a la red Polygon y pagado la comisión del contrato puede ver su dirección en el centro de la pantalla, después de Operator:"
+# echo "Recomendamos aceptar el uso del nodo para la publicación/suscripción de datos"
+# echo "Recomendamos seleccionar el plugin: Websocket por ser el más avanzado y el configurado en docker,"
+# echo "aunque puede seleccionar más de uno (si ve símbolos <?> para seleccionarlo solo tiene que tener un símbolo)."
+# echo "Necesita un puerto TCP/UDP abierto por cada plugin que escoja."
+# docker stop streamr >> $LOG 2>&1
+# docker rm streamr >> $LOG 2>&1
+# mkdir -p /root/.streamrDocker && chmod 777 /root/.streamrDocker
+# docker run -it -v /root/.streamrDocker:/home/streamr/.streamr streamr/broker-node:v100.0.0-testnet-three.3 bin/config-wizard
+# echo "A continuación tiene que enviar un poco de MATIC a la dirección del nodo (por ejemplo 0.1)"
+# echo "Y finalmente tiene que añadir el nodo en su página de operador, por la parte inferior encontrará la sección: Operator's node addresses"
+# echo "Solo tiene que pulsar en el botón Add node address y pegar la dirección del nodo recién creado."
+# echp "Pulse enter cuando haya finalizado, para proceder a la ejecución del nodo Streamr"
+# echo "Activando la imagen de docker streamr y el actualizador watchtowerS..."
+# docker run -d -p "$sport":32200 --name streamr --restart unless-stopped -v /root/.streamrDocker:/home/streamr/.streamr streamr/broker-node:v100.0.0-testnet-three.3
+# docker stop watchtowerS >> $LOG 2>&1
+# docker rm watchtowerS >> $LOG 2>&1
+# docker run -d --restart unless-stopped --name watchtowerS -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower streamr watchtowerS --cleanup --include-stopped --include-restarting --revive-stopped --interval 86510 --scope streamr >> $LOG 2>&1
+# echo Streamr instalado.
+#else
+# if [[ "$APPS" =~ .*"streamr".* ]]; then
+#  echo "¿Quiere eliminar completamente Streamr? [si/NO] :"
+#  read desinss
+#  desinssmin=$(echo $desinss | tr '[:upper:]' '[:lower:]')
+#  if [[ $desinssmin = "si" ]]; then
+#   echo Desinstalando imagen de docker streamr y actualizador watchtowerS...
+#   docker stop streamr >> $LOG 2>&1
+#   docker rm streamr >> $LOG 2>&1
+#   docker rmi streamr/broker-node:v100.0.0-testnet-three.3 >> $LOG 2>&1
+#   docker stop watchtowerS >> $LOG 2>&1
+#   docker rm watchtowerS >> $LOG 2>&1
+#   echo Streamr desinstalado.
+#  fi
+# fi
+#fi
+
 ## BitPing:
 echo
 if [[ "$APPS" =~ .*"bitping".* ]]; then
@@ -577,7 +684,7 @@ if [[ $insbpmin = "si" ]]; then
  docker run --privileged --rm tonistiigi/binfmt --install amd64  >> $LOG 2>&1
  docker stop watchtowerBP >> $LOG 2>&1
  docker rm watchtowerBP >> $LOG 2>&1
- docker run -d --restart unless-stopped --name watchtowerBP -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower bitping watchtowerBP --cleanup --include-stopped --include-restarting --revive-stopped --interval 86490 --scope bitping >> $LOG 2>&1
+ docker run -d --restart unless-stopped --name watchtowerBP -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower bitping watchtowerBP --cleanup --include-stopped --include-restarting --revive-stopped --interval 86500 --scope bitping >> $LOG 2>&1
  docker stop bitping >> $LOG 2>&1
  docker rm bitping >> $LOG 2>&1
  echo IMPORTANTE:
