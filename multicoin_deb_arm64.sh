@@ -2,8 +2,7 @@
 #
 # Multicoin Installation Script
 # TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM and BitPing (Meson and Streamr will be included too, MASQ and Grass will be next)
-# Versión: 1.0
-# Version: 1.0
+# Version: 1.1
 # License: GPLv3
 #
 
