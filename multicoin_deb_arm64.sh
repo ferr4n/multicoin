@@ -12,6 +12,7 @@ LOG=/var/log/multicoin.log
 # Uncomment to log all the commands:
 #exec 1> >(tee $LOG) 2>&1
 
+# Uncomment for Streamr and Meson (expert):
 #echo "Install (or reinstall) and uninstall apps TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, Meson, Streamr and BitPing"
 echo "Install (or reinstall) and uninstall apps TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station and BitPing"
 echo
@@ -615,7 +616,8 @@ fi
 #read inss
 #inssmin=$(echo $inss | tr '[:upper:]' '[:lower:]')
 #if [[ $inssmin = "si" ]]; then
-# echo Es necesario tener una dirección IP pública y un puerto TCP abierto (por defecto es el 32200)
+# echo "Para ser Operador de Streamr hay que invertir unos 400 MATIC ($400 ó 350€)"
+# echo "Es necesario tener una dirección IP pública y un puerto TCP abierto (por defecto es el 32200)"
 # echo "Escriba el puerto que desea utilizar [32200] :"
 # read sport
 # if [[ $sport == "" ]]; then
@@ -638,7 +640,7 @@ fi
 # docker run -it -v /root/.streamrDocker:/home/streamr/.streamr streamr/broker-node:v100.0.0-testnet-three.3 bin/config-wizard
 # echo "A continuación tiene que enviar un poco de MATIC a la dirección del nodo (por ejemplo 0.1)"
 # echo "Y finalmente tiene que añadir el nodo en su página de operador, por la parte inferior encontrará la sección: Operator's node addresses"
-# echo "Solo tiene que pulsar en el botón Add node address y pegar la dirección del nodo recién creado."
+# echo "Solo tiene que pulsar en el botón Add node address, pegar la dirección del nodo recién creado, darle a guardar y confirmar la transacción."
 # echp "Pulse enter cuando haya finalizado, para proceder a la ejecución del nodo Streamr"
 # echo "Activando la imagen de docker streamr y el actualizador watchtowerS..."
 # docker run -d -p "$sport":32200 --name streamr --restart unless-stopped -v /root/.streamrDocker:/home/streamr/.streamr streamr/broker-node:v100.0.0-testnet-three.3
@@ -646,6 +648,7 @@ fi
 # docker rm watchtowerS >> $LOG 2>&1
 # docker run -d --restart unless-stopped --name watchtowerS -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower streamr watchtowerS --cleanup --include-stopped --include-restarting --revive-stopped --interval 86510 --scope streamr >> $LOG 2>&1
 # echo Streamr instalado.
+# echo No olvide comprar como mínimo 5000 DATA Tokens y enviarlos a la dirección de su operador para poder obtener recompensas.
 #else
 # if [[ "$APPS" =~ .*"streamr".* ]]; then
 #  echo "¿Quiere eliminar completamente Streamr? [si/NO] :"
