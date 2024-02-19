@@ -12,6 +12,7 @@ LOG=/var/log/multimoneda.log
 # Descomente para obtener registro de todos los comandos:
 #exec 1> >(tee $LOG) 2>&1
 
+# Descomente para Streamr y Meson (experto):
 #echo "Instalar (o reinstalar) y desinstalar aplicaciones TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, Meson, Streamr y BitPing"
 echo "Instalar (o reinstalar) y desinstalar aplicaciones TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station y BitPing"
 echo
@@ -51,13 +52,13 @@ fi
 echo
 echo Aplicaciones instaladas actualmente:
 echo
-# Descommente para Streamr (experto):
+# Descomente para Streamr (experto):
 #APPS=`docker ps -a --format '{{.Names}}' | grep 'traffmonetizer\|honeygain\|pawns\|packetstream\|repocket\|proxyrack\|proxylite\|mysterium\|earnfm\|fstation\|streamr\|bitping' | tee /dev/tty`
 APPS=`docker ps -a --format '{{.Names}}' | grep 'traffmonetizer\|honeygain\|pawns\|packetstream\|repocket\|proxyrack\|proxylite\|mysterium\|earnfm\|fstation\|bitping' | tee /dev/tty`
-# Descommente para Meson (experto):
+# Descomente para Meson (experto):
 #APPS+=" "`ps axco command|grep meson_cdn|sort -u | tee /dev/tty`
 APPS+=" "`ps axco command|grep earnapp|sort -u | tee /dev/tty`
-# Descommente para Meson (experto):
+# Descomente para Meson (experto):
 #if [[ "$APPS" = "  " ]]; then
 if [[ "$APPS" = " " ]]; then
  echo Aun no hay aplicaciones instaladas.
@@ -611,7 +612,8 @@ fi
 #read inss
 #inssmin=$(echo $inss | tr '[:upper:]' '[:lower:]')
 #if [[ $inssmin = "si" ]]; then
-# echo Es necesario tener una dirección IP pública y un puerto TCP abierto (por defecto es el 32200)
+# echo "Para ser Operador de Streamr hay que invertir unos 400 MATIC ($400 ó 350€)"
+# echo "Es necesario tener una dirección IP pública y un puerto TCP abierto (por defecto es el 32200)"
 # echo "Escriba el puerto que desea utilizar [32200] :"
 # read sport
 # if [[ $sport == "" ]]; then
@@ -634,7 +636,7 @@ fi
 # docker run -it -v /root/.streamrDocker:/home/streamr/.streamr streamr/broker-node:v100.0.0-testnet-three.3 bin/config-wizard
 # echo "A continuación tiene que enviar un poco de MATIC a la dirección del nodo (por ejemplo 0.1)"
 # echo "Y finalmente tiene que añadir el nodo en su página de operador, por la parte inferior encontrará la sección: Operator's node addresses"
-# echo "Solo tiene que pulsar en el botón Add node address y pegar la dirección del nodo recién creado."
+# echo "Solo tiene que pulsar en el botón Add node address, pegar la dirección del nodo recién creado, darle a guardar y confirmar la transacción."
 # echp "Pulse enter cuando haya finalizado, para proceder a la ejecución del nodo Streamr"
 # echo "Activando la imagen de docker streamr y el actualizador watchtowerS..."
 # docker run -d -p "$sport":32200 --name streamr --restart unless-stopped -v /root/.streamrDocker:/home/streamr/.streamr streamr/broker-node:v100.0.0-testnet-three.3
@@ -642,6 +644,7 @@ fi
 # docker rm watchtowerS >> $LOG 2>&1
 # docker run -d --restart unless-stopped --name watchtowerS -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower streamr watchtowerS --cleanup --include-stopped --include-restarting --revive-stopped --interval 86510 --scope streamr >> $LOG 2>&1
 # echo Streamr instalado.
+# echo No olvide comprar como mínimo 5000 DATA Tokens y enviarlos a la dirección de su operador para poder obtener recompensas.
 #else
 # if [[ "$APPS" =~ .*"streamr".* ]]; then
 #  echo "¿Quiere eliminar completamente Streamr? [si/NO] :"
