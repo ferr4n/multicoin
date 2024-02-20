@@ -1,12 +1,12 @@
 # EN
 ## Multicoin Mining Script
-Install, reinstall and/or uninstall 12 apps that reward sharing your connection.
+Install, reinstall and/or uninstall 13 apps that reward sharing your connection.
 
 Platform: Debian compatible OS on ARM64 architecture
 
 Languages: English and Spanish
 
-Supported Apps: TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station and BitPing
+Supported Apps: TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare and BitPing
 
 License: GPLv3
 
@@ -24,13 +24,13 @@ Access the terminal of your ARM64 Debian-based computer (e.g. Raspberry Pi) and 
 
 # ES
 ## Script de Minado Multimoneda
-Instala, reinstala y/o desinstala 12 aplicaciones que recompensan compartir Internet.
+Instala, reinstala y/o desinstala 13 aplicaciones que recompensan compartir Internet.
 
 Platform: Sistema Operativo compatible con Debian y arquitectura ARM64
 
 Idiomas: Español e Inglés
 
-Aplicaciones: TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station y BitPing
+Aplicaciones: TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare y BitPing
 
 Licencia: GPLv3
 
