@@ -8,6 +8,8 @@ Languages: English and Spanish.
 
 Supported Apps: TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare and BitPing.
 
+Version: 1.3
+
 License: GPL v3
 
 ### Instructions
@@ -31,6 +33,8 @@ Plataforma: Sistema Operativo compatible con Debian y arquitectura ARM64.
 Idiomas: Español e Inglés.
 
 Aplicaciones: TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare y BitPing.
+
+Versión: 1.3
 
 Licencia: GPL v3
 
