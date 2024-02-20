@@ -2,7 +2,7 @@
 #
 # Multicoin Installation Script
 # TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM and BitPing (Meson and Streamr will be included too, MASQ and Grass will be next)
-# Version: 1.2
+# Version: 1.3
 # License: GPLv3
 #
 
@@ -534,6 +534,10 @@ if [[ $insfsmin = "yes" ]]; then
  echo You need to have the token FIL in the Polygon network of your Ethereum wallet, it can be done in chainlist.org
  echo When it is done paste your wallet address and press enter to continue.
  read fswallet
+ if [[ $apirp == "" ]]; then
+  echo Wallet address cannot be blank, please launch the script again.
+  exit 0
+ fi
  echo Installing docker image fstation and its updater watchtowerFS...
  docker stop fstation >> $LOG 2>&1
  docker rm fstation >> $LOG 2>&1
