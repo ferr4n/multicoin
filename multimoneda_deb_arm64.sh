@@ -2,7 +2,7 @@
 #
 # Script de Instalación de MultiMonedas
 # TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare y BitPing (Meson y Streamr también serán incluidos, MASQ y Grass serán los siguientes)
-# Versión: 1.2
+# Versión: 1.3
 # Licencia: GPLv3
 #
 
