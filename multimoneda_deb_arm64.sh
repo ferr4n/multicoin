@@ -1,20 +1,20 @@
 #!/bin/bash
 #
 # Script de Instalación de MultiMonedas
-# TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM y BitPing (Meson y Streamr también serán incluidos, MASQ y Grass serán los siguientes)
-# Versión: 1.1
+# TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare y BitPing (Meson y Streamr también serán incluidos, MASQ y Grass serán los siguientes)
+# Versión: 1.2
 # Licencia: GPLv3
 #
 
 # Aquí puede indicar el archivo de registro:
 LOG=/var/log/multimoneda.log
 
-# Descomente para obtener registro de todos los comandos:
+# Descomente para registrar del resultado de absolutamente todos los comandos (útil para depuración):
 #exec 1> >(tee $LOG) 2>&1
 
 # Descomente para Streamr y Meson (experto):
-#echo "Instalar (o reinstalar) y desinstalar aplicaciones TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, Meson, Streamr y BitPing"
-echo "Instalar (o reinstalar) y desinstalar aplicaciones TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station y BitPing"
+#echo "Instalar (o reinstalar) y desinstalar aplicaciones TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare, Meson, Streamr y BitPing"
+echo "Instalar (o reinstalar) y desinstalar aplicaciones TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare y BitPing"
 echo
 echo "Escriba un nombre para diferenciar este dispositivo de otros (sin espacios) y presione enter:"
 read nombre
@@ -53,15 +53,13 @@ echo
 echo Aplicaciones instaladas actualmente:
 echo
 # Descomente para Streamr (experto):
-#APPS=`docker ps -a --format '{{.Names}}' | grep 'traffmonetizer\|honeygain\|pawns\|packetstream\|repocket\|proxyrack\|proxylite\|mysterium\|earnfm\|fstation\|streamr\|bitping' | tee /dev/tty`
-APPS=`docker ps -a --format '{{.Names}}' | grep 'traffmonetizer\|honeygain\|pawns\|packetstream\|repocket\|proxyrack\|proxylite\|mysterium\|earnfm\|fstation\|bitping' | tee /dev/tty`
+#APPS=`docker ps -a --format '{{.Names}}' | grep -F -e traffmonetizer -e honeygain -e pawns -e packetstream -e repocket -e proxyrack -e proxylite -e mysterium -e earnfm -e fstation -e bitping -e streamr | tee /dev/tty`
+APPS=`docker ps -a --format '{{.Names}}' | grep -F -e traffmonetizer -e honeygain -e pawns -e packetstream -e repocket -e proxyrack -e proxylite -e mysterium -e earnfm -e fstation -e bitping | tee /dev/tty`
 # Descomente para Meson (experto):
-#APPS+=" "`ps axco command|grep meson_cdn|sort -u | tee /dev/tty`
-APPS+=" "`ps axco command|grep earnapp|sort -u | tee /dev/tty`
-# Descomente para Meson (experto):
-#if [[ "$APPS" = "  " ]]; then
+#APPS+=" "`ps axco command | grep -F -e earnapp -e speedshare -e meson_cdn | sort | uniq | tee /dev/tty`
+APPS+=" "`ps axco command | grep -F -e earnapp -e speedshare | sort | uniq | tee /dev/tty`
 if [[ "$APPS" = " " ]]; then
- echo Aun no hay aplicaciones instaladas.
+ echo No installed apps yet.
 fi
 
 ## TraffMonetizer
@@ -552,6 +550,51 @@ else
    docker stop watchtowerFS >> $LOG 2>&1
    docker rm watchtowerFS >> $LOG 2>&1
    echo Filecoin Station desinstalado.
+  fi
+ fi
+fi
+
+## SpeedShare
+echo
+if [[ "$APPS" =~ .*"speedshare".* ]]; then
+ echo "SpeedShare ya estaba instalado ¿Quiere reinstalarlo, por ejemplo para alterar sus parámetros? [si/NO] :"
+else
+ echo "¿Quiere instalar SpeedShare? [si/NO] :"
+fi
+read insss
+insssmin=$(echo $insss | tr '[:upper:]' '[:lower:]')
+if [[ $insssmin = "si" ]]; then
+ echo Es necesario registro previo en https://speedshare.app/?ref=Ferran
+ echo Una vez hecho vaya a la sección Devices, copie el AUTHENTICATION CODE y péguelo aquí.
+ echo Cuando lo haya hecho pulse enter para continuar.
+ read authcode
+ echo "Instalando el servicio nativo de speedshare (no hay imagen de docker) con el código $authcode..."
+ if [ -e /usr/local/bin/speedshare ]; then
+  killall speedshare >> $LOG 2>&1
+  rm -f /usr/local/bin/speedshare >> $LOG 2>&1
+ fi
+ wget -qO- https://api.speedshare.app/download/linux/cli/arm64 > /usr/local/bin/speedshare
+ chmod +x /usr/local/bin/speedshare
+ /usr/local/bin/speedshare connect --pairing_code "$authcode" >> $LOG 2>&1 & disown
+ cp -a /etc/rc.local /etc/rc.local.ORIG >> $LOG 2>&1
+ grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
+ grep -F -v speedshare /etc/rc.local.AUX > /etc/rc.local.OK
+ rm -f /etc/rc.local.AUX >> $LOG 2>&1
+ echo 'speedshare connect --pairing_code $authcode' >> /etc/rc.local.OK
+ echo 'exit 0' >> /etc/rc.local.OK
+ chmod +x /etc/rc.local.OK >> $LOG 2>&1
+ cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
+ echo SpeedShare instalado.
+else
+ if [[ "$APPS" =~ .*"speedshare".* ]]; then
+  echo "¿Quiere eliminar completamente SpeedShare? [si/NO] :"
+  read desinsss
+  desinsssmin=$(echo $desinsss | tr '[:upper:]' '[:lower:]')
+  if [[ $desinsssmin = "si" ]]; then
+   echo Desinstalando SpeedShare...
+   killall speedshare >> $LOG 2>&1
+   rm -f /usr/local/bin/speedshare >> $LOG 2>&1
+   echo SpeedShare desinstalado.
   fi
  fi
 fi
