@@ -2,19 +2,19 @@
 #
 # Multicoin Installation Script
 # TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM and BitPing (Meson and Streamr will be included too, MASQ and Grass will be next)
-# Version: 1.1
+# Version: 1.2
 # License: GPLv3
 #
 
 # Log file can be specified here
 LOG=/var/log/multicoin.log
 
-# Uncomment to log all the commands:
+# Uncomment to log the output of absolutely all the commands (useful for debugging purposes):
 #exec 1> >(tee $LOG) 2>&1
 
 # Uncomment for Streamr and Meson (expert):
-#echo "Install (or reinstall) and uninstall apps TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, Meson, Streamr and BitPing"
-echo "Install (or reinstall) and uninstall apps TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station and BitPing"
+#echo "Install (or reinstall) and uninstall apps TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare, Meson, Streamr and BitPing"
+echo "Install (or reinstall) and uninstall apps TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare and BitPing"
 echo
 echo "Write a name for this system (without spaces, tipically the hostname) and press enter:"
 read nombre
@@ -53,13 +53,11 @@ echo
 echo Currently installed apps:
 echo
 # Uncomment for Streamr (expert):
-#APPS=`docker ps -a --format '{{.Names}}' | grep 'traffmonetizer\|honeygain\|pawns\|packetstream\|repocket\|proxyrack\|proxylite\|mysterium\|earnfm\|fstation\|streamr\|bitping' | tee /dev/tty`
-APPS=`docker ps -a --format '{{.Names}}' | grep 'traffmonetizer\|honeygain\|pawns\|packetstream\|repocket\|proxyrack\|proxylite\|mysterium\|earnfm\|fstation\|bitping' | tee /dev/tty`
+#APPS=`docker ps -a --format '{{.Names}}' | grep -F -e traffmonetizer -e honeygain -e pawns -e packetstream -e repocket -e proxyrack -e proxylite -e mysterium -e earnfm -e fstation -e bitping -e streamr | tee /dev/tty`
+APPS=`docker ps -a --format '{{.Names}}' | grep -F -e traffmonetizer -e honeygain -e pawns -e packetstream -e repocket -e proxyrack -e proxylite -e mysterium -e earnfm -e fstation -e bitping | tee /dev/tty`
 # Uncomment for Meson (expert):
-#APPS+=" "`ps axco command|grep meson_cdn|sort -u | tee /dev/tty`
-APPS+=" "`ps axco command|grep earnapp|sort -u | tee /dev/tty`
-# Uncomment for Meson (expert):
-#if [[ "$APPS" = "  " ]]; then
+#APPS+=" "`ps axco command | grep -F -e earnapp -e speedshare -e meson_cdn | sort | uniq | tee /dev/tty`
+APPS+=" "`ps axco command | grep -F -e earnapp -e speedshare | sort | uniq | tee /dev/tty`
 if [[ "$APPS" = " " ]]; then
  echo No installed apps yet.
 fi
@@ -528,7 +526,7 @@ else
 fi
 read insfs
 insfsmin=$(echo $insfs | tr '[:upper:]' '[:lower:]')
-if [[ $insfsmin = "si" ]]; then
+if [[ $insfsmin = "yes" ]]; then
  echo You need to have the token FIL in the Polygon network of your Ethereum wallet, it can be done in chainlist.org
  echo When it is done paste your wallet address and press enter to continue.
  read fswallet
@@ -545,13 +543,58 @@ else
   echo "Do you want to completely remove Filecoin Station? [yes/NO] :"
   read desinsfs
   desinsfsmin=$(echo $desinsfs | tr '[:upper:]' '[:lower:]')
-  if [[ $desinsfsmin = "si" ]]; then
+  if [[ $desinsfsmin = "yes" ]]; then
    echo Uninstalling docker image fstation and its updater watchtowerFS...
    docker stop fstation >> $LOG 2>&1
    docker rm fstation >> $LOG 2>&1
    docker rmi ghcr.io/filecoin-station/core >> $LOG 2>&1
    docker stop watchtowerFS >> $LOG 2>&1
    docker rm watchtowerFS >> $LOG 2>&1
+   echo Done.
+  fi
+ fi
+fi
+
+## SpeedShare
+echo
+if [[ "$APPS" =~ .*"speedshare".* ]]; then
+ echo "SpeedShare was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
+else
+ echo "Do you want to install SpeedShare? [yes/NO] :"
+fi
+read insss
+insssmin=$(echo $insss | tr '[:upper:]' '[:lower:]')
+if [[ $insssmin = "yes" ]]; then
+ echo Please create an account here: https://speedshare.app/?ref=Ferran
+ echo Go to section Devices, copy the AUTHENTICATION CODE and paste it here.
+ echo Once it is done press enter to continue.
+ read authcode
+ echo "Installing native speedshare app (there is no docker image) with the code $authcode to directory /usr/local/bin/..."
+ if [ -e /usr/local/bin/speedshare ]; then
+  killall speedshare >> $LOG 2>&1
+  rm -f /usr/local/bin/speedshare >> $LOG 2>&1
+ fi
+ wget -qO- https://api.speedshare.app/download/linux/cli/arm64 > /usr/local/bin/speedshare
+ chmod +x /usr/local/bin/speedshare
+ /usr/local/bin/speedshare connect --pairing_code "$authcode" >> $LOG 2>&1 & disown
+cp -a /etc/rc.local /etc/rc.local.ORIG >> $LOG 2>&1
+ grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
+ grep -F -v speedshare /etc/rc.local.AUX > /etc/rc.local.OK
+ rm -f /etc/rc.local.AUX >> $LOG 2>&1
+ echo 'speedshare connect --pairing_code $authcode' >> /etc/rc.local.OK
+ echo 'exit 0' >> /etc/rc.local.OK
+ chmod +x /etc/rc.local.OK >> $LOG 2>&1
+ cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
+ echo Done.
+else
+ if [[ "$APPS" =~ .*"speedshare".* ]]; then
+  echo "Do you want to completely remove SpeedShare? [yes/NO] :"
+  read desinsss
+  desinsssmin=$(echo $desinsss | tr '[:upper:]' '[:lower:]')
+  if [[ $desinsssmin = "yes" ]]; then
+   echo Desinstalando SpeedShare...
+   killall speedshare >> $LOG 2>&1
+   rm -f /usr/local/bin/speedshare >> $LOG 2>&1
    echo Done.
   fi
  fi
@@ -615,7 +658,7 @@ fi
 #fi
 #read inss
 #inssmin=$(echo $inss | tr '[:upper:]' '[:lower:]')
-#if [[ $inssmin = "si" ]]; then
+#if [[ $inssmin = "yes" ]]; then
 # echo "Para ser Operador de Streamr hay que invertir unos 400 MATIC ($400 ó 350€)"
 # echo "Es necesario tener una dirección IP pública y un puerto TCP abierto (por defecto es el 32200)"
 # echo "Escriba el puerto que desea utilizar [32200] :"
@@ -654,7 +697,7 @@ fi
 #  echo "¿Quiere eliminar completamente Streamr? [si/NO] :"
 #  read desinss
 #  desinssmin=$(echo $desinss | tr '[:upper:]' '[:lower:]')
-#  if [[ $desinssmin = "si" ]]; then
+#  if [[ $desinssmin = "yes" ]]; then
 #   echo Desinstalando imagen de docker streamr y actualizador watchtowerS...
 #   docker stop streamr >> $LOG 2>&1
 #   docker rm streamr >> $LOG 2>&1
