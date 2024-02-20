@@ -358,7 +358,7 @@ if [[ $insrpmin = "si" ]]; then
  echo "Pegue la clave API que muestra la web cuando ingresa con sus credenciales (Api Key):"
  read apirp
  if [[ $apirp == "" ]]; then
-  echo No puede dejar la clave api en blanco. Vuelva a ejecutar el script.
+  echo No puede dejar la clave API en blanco. Vuelva a ejecutar el script.
   exit 0
  fi
  echo Instalando imagen de docker repocket con el email $emailrp y la clave api $apirp y actualizador watchtowerRP...
@@ -491,6 +491,10 @@ if [[ $insefmin = "si" ]]; then
  echo Es necesario registro previo en https://earn.fm/ref/FRAN6E6B
  echo Cuando lo haya hecho pegue su API Key y pulse enter para continuar.
  read efapi
+if [[ $apirp == "" ]]; then
+  echo No puede dejar la clave API en blanco. Vuelva a ejecutar el script.
+  exit 0
+ fi
  echo Instalando la imagen de docker earnfm y el actualizador watchtowerEF...
  docker stop earnfm >> $LOG 2>&1
  docker rm earnfm >> $LOG 2>&1
@@ -529,6 +533,10 @@ if [[ $insfsmin = "si" ]]; then
  echo Es necesario tener el token FIL en la red Polygon de su billetera Ethereum, puede enlazarla usando la web chainlist.org
  echo Cuando lo haya hecho pegue la dirección de su billetera y pulse enter para continuar.
  read fswallet
+ if [[ $fswallet == "" ]]; then
+  echo No puede dejar la billetera en blanco. Vuelva a ejecutar el script.
+  exit 0
+ fi
  echo Instalando la imagen de docker fstation y el actualizador watchtowerFS...
  docker stop fstation >> $LOG 2>&1
  docker rm fstation >> $LOG 2>&1
@@ -568,6 +576,10 @@ if [[ $insssmin = "si" ]]; then
  echo Una vez hecho vaya a la sección Devices, copie el AUTHENTICATION CODE y péguelo aquí.
  echo Cuando lo haya hecho pulse enter para continuar.
  read authcode
+ if [[ $authcode == "" ]]; then
+  echo No puede dejar el código de autenticación en blanco. Vuelva a ejecutar el script.
+  exit 0
+ fi
  echo "Instalando el servicio nativo de speedshare (no hay imagen de docker) con el código $authcode..."
  if [ -e /usr/local/bin/speedshare ]; then
   killall speedshare >> $LOG 2>&1
