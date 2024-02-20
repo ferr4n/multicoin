@@ -491,6 +491,10 @@ if [[ $insefmin = "yes" ]]; then
  echo Please create an account here: https://earn.fm/ref/FRAN6E6B
  echo When it is done paste your API Key and press enter to continue.
  read efapi
+if [[ $efapi == "" ]]; then
+  echo API Key cannot be blank, please launch the script again.
+  exit 0
+ fi
  echo Installing docker image earnfm and its updater watchtowerEF...
  docker stop earnfm >> $LOG 2>&1
  docker rm earnfm >> $LOG 2>&1
@@ -569,6 +573,10 @@ if [[ $insssmin = "yes" ]]; then
  echo Go to section Devices, copy the AUTHENTICATION CODE and paste it here.
  echo Once it is done press enter to continue.
  read authcode
+ if [[ $authcode == "" ]]; then
+  echo The Authentication Code cannot be blank, please launch the script again.
+  exit 0
+ fi
  echo "Installing native speedshare app (there is no docker image) with the code $authcode to directory /usr/local/bin/..."
  if [ -e /usr/local/bin/speedshare ]; then
   killall speedshare >> $LOG 2>&1
