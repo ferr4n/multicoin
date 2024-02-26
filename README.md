@@ -2,7 +2,7 @@
 ## Multicoin Mining Script
 Install, reinstall and/or uninstall 13 apps that reward sharing your connection.
 
-Platform: Debian compatible OS on ARM64 architecture.
+Platform: Debian compatible OS on ARM64 architecture and Browan's MerryIoT hotspot.
 
 Languages: English and Spanish.
 
@@ -38,7 +38,7 @@ Access the terminal* of your MerryIoT hotspot and run the following commands:
 ## Script de Minado Multimoneda
 Instala, reinstala y/o desinstala 13 aplicaciones que recompensan compartir Internet.
 
-Plataforma: Sistema Operativo compatible con Debian y arquitectura ARM64.
+Plataforma: Sistema Operativo compatible con Debian y arquitectura ARM64 y hotspot MerryIoT de Browan.
 
 Idiomas: Español e Inglés.
 
