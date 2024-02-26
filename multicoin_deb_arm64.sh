@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Multicoin Installation Script
+# Multicoin Installation Script on Debian ARM64
 # TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM and BitPing (Meson and Streamr will be included too, MASQ and Grass will be next)
-# Version: 1.3
+# Version: 1.4
 # License: GPLv3
 #
 
@@ -17,9 +17,9 @@ LOG=/var/log/multicoin.log
 echo "Install (or reinstall) and uninstall apps TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare and BitPing"
 echo
 echo "Write a name for this system (without spaces, tipically the hostname) and press enter:"
-read nombre
+read name
 ident=$(cat /etc/hostname)
-if [[ $nombre == "" ]]; then
+if [[ $name == "" ]]; then
  echo The name cannot be blank, please launch the script again.
  exit 0
 fi
@@ -30,19 +30,32 @@ echo "Do you want to update system packages? (Recommended at first execution of 
 read actapt
 actaptmin=$(echo $actapt | tr '[:upper:]' '[:lower:]')
 if [[ $actaptmin = "yes" ]]; then
- echo Updating system with apt, this may take a while...
- apt update >> $LOG 2>&1
- apt --purge full-upgrade -y >> $LOG 2>&1
- apt --purge autoremove -y >> $LOG 2>&1
  if [ ! -e /etc/apt/sources.list.d/docker.list ]; then
   echo "Installing Docker (official) and Curl (required by official docker)"
   apt install -y curl >> $LOG 2>&1
   curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg | apt-key add - && echo "deb https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list >> $LOG 2>&1
-  apt install -y --no-install-recommends docker-ce >> $LOG 2>&1
+  apt update >> $LOG 2>&1
+  apt install -y --no-install-recommends --purge docker-ce >> $LOG 2>&1
   systemctl enable docker >> $LOG 2>&1
   systemctl restart docker >> $LOG 2>&1
  fi
- apt install -y unattended-upgrades fail2ban needrestart >> $LOG 2>&1
+if [ ! -e /etc/docker/daemon.json ]; then
+ echo Setting limit to docker logs to 10 MB and 3 files...
+ cat <<EOF >/etc/docker/daemon.json
+{
+ "log-driver": "json-file",
+ "log-opts":
+ {
+  "max-size": "10m",
+  "max-file": "3"
+ }
+}
+EOF
+fi
+ echo Updating packages with apt, this may take a while...
+ apt update >> $LOG 2>&1
+ apt --purge full-upgrade -y >> $LOG 2>&1
+ apt install -y unattended-upgrades fail2ban >> $LOG 2>&1
  apt --purge autoremove -y >> $LOG 2>&1
  apt clean >> $LOG 2>&1
  echo Done.
@@ -59,7 +72,7 @@ APPS=`docker ps -a --format '{{.Names}}' | grep -F -e traffmonetizer -e honeygai
 #APPS+=" "`ps axco command | grep -F -e earnapp -e speedshare -e meson_cdn | sort | uniq | tee /dev/tty`
 APPS+=" "`ps axco command | grep -F -e earnapp -e speedshare | sort | uniq | tee /dev/tty`
 if [[ "$APPS" = " " ]]; then
- echo No installed apps yet.
+ echo No app installed.
 fi
 
 ## TraffMonetizer
@@ -127,7 +140,7 @@ if [[ $inshgmin = "yes" ]]; then
   echo Password cannot be blank, please launch the script again.
   exit 0
  fi
- nombremin=$(echo $nombre | tr '[:upper:]' '[:lower:]')
+ namemin=$(echo $name | tr '[:upper:]' '[:lower:]')
  echo Installing docker image honeygain with email $emailhg and password $passhg and its updater watchtowerHG...
  cp -a /etc/rc.local /etc/rc.local.ORIG >> $LOG 2>&1
  grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
@@ -140,7 +153,7 @@ if [[ $inshgmin = "yes" ]]; then
  docker run --privileged --rm tonistiigi/binfmt --install amd64  >> $LOG 2>&1
  docker stop honeygain >> $LOG 2>&1
  docker rm honeygain >> $LOG 2>&1
- docker run -d --restart unless-stopped --platform linux/amd64 --name honeygain honeygain/honeygain -tou-accept -email $emailhg -pass $passhg -device $nombremin >> $LOG 2>&1
+ docker run -d --restart unless-stopped --platform linux/amd64 --name honeygain honeygain/honeygain -tou-accept -email $emailhg -pass $passhg -device $namemin >> $LOG 2>&1
  docker stop watchtowerHG >> $LOG 2>&1
  docker rm watchtowerHG >> $LOG 2>&1
  docker run -d --name watchtowerHG --restart=unless-stopped -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower honeygain watchtowerHG --scope honeygain --interval 86410 >> $LOG 2>&1
@@ -157,57 +170,6 @@ else
    docker rmi honeygain/honeygain >> $LOG 2>&1
    docker stop watchtowerHG >> $LOG 2>&1
    docker rm watchtowerHG >> $LOG 2>&1
-   echo Done.
-  fi
- fi
-fi
-
-## ProxyLite
-echo
-if [[ "$APPS" =~ .*"proxylite".* ]]; then
- echo "ProxyLite was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
-else
- echo "Do you want to install ProxyLite? [yes/NO] :"
-fi
-read inspl
-insplmin=$(echo $inspl | tr '[:upper:]' '[:lower:]')
-if [[ $insplmin = "yes" ]]; then
- echo Please create an account here: https://proxylite.ru/?r=VXCFMG4X
- echo User ID:
- read idpl
- if [[ $idpl == "" ]]; then
-  echo User ID cannot be blank, please launch the script again.
-  exit 0
- fi
- echo Installing docker image proxylite with ID $idpl and its updater watchtowerPL...
- cp -a /etc/rc.local /etc/rc.local.ORIG >> $LOG 2>&1
- grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
- grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
- rm -f /etc/rc.local.AUX >> $LOG 2>&1
- echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
- echo 'exit 0' >> /etc/rc.local.OK
- chmod +x /etc/rc.local.OK >> $LOG 2>&1
- cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
- docker run --privileged --rm tonistiigi/binfmt --install amd64  >> $LOG 2>&1
- docker stop proxylite  >> $LOG 2>&1
- docker rm proxylite  >> $LOG 2>&1
- docker run -de "USER_ID=$idpl" --restart unless-stopped --platform linux/amd64 --name proxylite proxylite/proxyservice >> $LOG 2>&1
- docker stop watchtowerPL  >> $LOG 2>&1
- docker rm watchtowerPL  >> $LOG 2>&1
- docker run -d --name watchtowerPL --restart=unless-stopped -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower proxylite watchtowerPL --cleanup --include-stopped --include-restarting --revive-stopped  --scope proxylite --interval 86420  >> $LOG 2>&1
- echo Done.
-else
- if [[ "$APPS" =~ .*"proxylite".* ]]; then
-  echo "Do you want to completely remove ProxyLite? [yes/NO] :"
-  read desinspl
-  desinsplmin=$(echo $desinspl | tr '[:upper:]' '[:lower:]')
-  if [[ $desinsplmin = "yes" ]]; then
-   echo Uninstalling docker image proxylite and its updater watchtowerPL...
-   docker stop proxylite >> $LOG 2>&1
-   docker rm proxylite >> $LOG 2>&1
-   docker rmi proxylite/proxyservice >> $LOG 2>&1
-   docker stop watchtowerPL >> $LOG 2>&1
-   docker rm watchtowerPL >> $LOG 2>&1
    echo Done.
   fi
  fi
@@ -276,7 +238,7 @@ if [[ $inspawnsmin = "yes" ]]; then
  echo Installing docker image pawns with email $emailpawns and password $passpawns and its updater watchtowerPawns...
  docker stop pawns >> $LOG 2>&1
  docker rm pawns >> $LOG 2>&1
- docker run -d --restart unless-stopped --name pawns iproyal/pawns-cli:latest -email=$emailpawns -password=$passpawns -device-name=$nombre -device-id=$ident -accept-tos >> $LOG 2>&1
+ docker run -d --restart unless-stopped --name pawns iproyal/pawns-cli:latest -email=$emailpawns -password=$passpawns -device-name=$name -device-id=$ident -accept-tos >> $LOG 2>&1
  docker stop watchtowerPawns >> $LOG 2>&1
  docker rm watchtowerPawns >> $LOG 2>&1
  docker run -d --name watchtowerPawns --restart unless-stopped -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower pawns watchtowerPawns --cleanup --include-stopped --include-restarting --revive-stopped --interval 86430 --scope pawns >> $LOG 2>&1
@@ -314,6 +276,15 @@ if [[ $inspsmin = "yes" ]]; then
   exit 0
  fi
  echo Installing docker image packetstream with CID $cidps and its updater watchtowerPS...
+ cp -a /etc/rc.local /etc/rc.local.BACK.PR >> $LOG 2>&1
+ grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
+ grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
+ rm -f /etc/rc.local.AUX >> $LOG 2>&1
+ echo 'docker run --privileged --rm  tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
+ echo 'exit 0' >> /etc/rc.local.OK
+ chmod +x /etc/rc.local.OK > $LOG  2>&1
+ cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
+ docker run --privileged --rm tonistiigi/binfmt --install amd64 >> $LOG 2>&1
  docker stop packetstream >> $LOG 2>&1
  docker rm packetstream >> $LOG 2>&1
  docker run -de CID=$cidps --restart unless-stopped --platform linux/arm64 --name packetstream packetstream/psclient:latest >> $LOG 2>&1
@@ -406,7 +377,7 @@ if [[ $insprmin = "yes" ]]; then
  rm -f /etc/rc.local.AUX >> $LOG 2>&1
  echo 'docker run --privileged --rm  tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
  echo 'exit 0' >> /etc/rc.local.OK
- chmod +x /etc/rc.local.OK > $LOG  2>&1
+ chmod +x /etc/rc.local.OK >> $LOG 2>&1
  cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
  docker run --privileged --rm tonistiigi/binfmt --install amd64 >> $LOG 2>&1
  docker stop proxyrack >> $LOG 2>&1
@@ -418,7 +389,7 @@ if [[ $insprmin = "yes" ]]; then
  docker rm watchtowerPR >> $LOG 2>&1
  docker run -d --restart unless-stopped --name watchtowerPR -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower proxyrack watchtowerPR --cleanup --include-stopped --include-restarting --revive-stopped --interval 86460 --scope proxyrack >> $LOG 2>&1
  echo ProxyRack instalado.
- echo IMPORTANTE. Dar de alta el dispositivo $nombre con el ID $UUID_PR en https://peer.proxyrack.com/devices
+ echo IMPORTANTE. Dar de alta el dispositivo $name con el ID $UUID_PR en https://peer.proxyrack.com/devices
 else
  if [[ "$APPS" =~ .*"proxyrack".* ]]; then
   echo "Do you want to completely remove ProxyRack? [yes/NO] :"
@@ -431,6 +402,57 @@ else
    docker rmi proxyrack/pop >> $LOG 2>&1
    docker stop watchtowerPR >> $LOG 2>&1
    docker rm watchtowerPR >> $LOG 2>&1
+   echo Done.
+  fi
+ fi
+fi
+
+## ProxyLite
+echo
+if [[ "$APPS" =~ .*"proxylite".* ]]; then
+ echo "ProxyLite was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
+else
+ echo "Do you want to install ProxyLite? [yes/NO] :"
+fi
+read inspl
+insplmin=$(echo $inspl | tr '[:upper:]' '[:lower:]')
+if [[ $insplmin = "yes" ]]; then
+ echo Please create an account here: https://proxylite.ru/?r=VXCFMG4X
+ echo User ID:
+ read idpl
+ if [[ $idpl == "" ]]; then
+  echo User ID cannot be blank, please launch the script again.
+  exit 0
+ fi
+ echo Installing docker image proxylite with ID $idpl and its updater watchtowerPL...
+ cp -a /etc/rc.local /etc/rc.local.ORIG >> $LOG 2>&1
+ grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
+ grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
+ rm -f /etc/rc.local.AUX >> $LOG 2>&1
+ echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
+ echo 'exit 0' >> /etc/rc.local.OK
+ chmod +x /etc/rc.local.OK >> $LOG 2>&1
+ cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
+ docker run --privileged --rm tonistiigi/binfmt --install amd64  >> $LOG 2>&1
+ docker stop proxylite  >> $LOG 2>&1
+ docker rm proxylite  >> $LOG 2>&1
+ docker run -de "USER_ID=$idpl" --restart unless-stopped --platform linux/amd64 --name proxylite proxylite/proxyservice >> $LOG 2>&1
+ docker stop watchtowerPL  >> $LOG 2>&1
+ docker rm watchtowerPL  >> $LOG 2>&1
+ docker run -d --name watchtowerPL --restart=unless-stopped -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower proxylite watchtowerPL --cleanup --include-stopped --include-restarting --revive-stopped  --scope proxylite --interval 86420  >> $LOG 2>&1
+ echo Done.
+else
+ if [[ "$APPS" =~ .*"proxylite".* ]]; then
+  echo "Do you want to completely remove ProxyLite? [yes/NO] :"
+  read desinspl
+  desinsplmin=$(echo $desinspl | tr '[:upper:]' '[:lower:]')
+  if [[ $desinsplmin = "yes" ]]; then
+   echo Uninstalling docker image proxylite and its updater watchtowerPL...
+   docker stop proxylite >> $LOG 2>&1
+   docker rm proxylite >> $LOG 2>&1
+   docker rmi proxylite/proxyservice >> $LOG 2>&1
+   docker stop watchtowerPL >> $LOG 2>&1
+   docker rm watchtowerPL >> $LOG 2>&1
    echo Done.
   fi
  fi
