@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Script de Instalación de MultiMonedas
+# Script de Instalación de MultiMonedas en Debian ARM64
 # TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare y BitPing (Meson y Streamr también serán incluidos, MASQ y Grass serán los siguientes)
-# Versión: 1.3
+# Versión: 1.4
 # Licencia: GPLv3
 #
 
@@ -30,19 +30,32 @@ echo "¿Desea actualizar el sistema? (Recomendado la primera vez que se ejecuta 
 read actapt
 actaptmin=$(echo $actapt | tr '[:upper:]' '[:lower:]')
 if [[ $actaptmin = "si" ]]; then
- echo Actualizando el sistema con apt, esto suele tardar...
- apt update >> $LOG 2>&1
- apt --purge full-upgrade -y >> $LOG 2>&1
- apt --purge autoremove -y >> $LOG 2>&1
  if [ ! -e /etc/apt/sources.list.d/docker.list ]; then
   echo "Instalando Docker (oficial) y Curl (requerido para docker oficial)"
   apt install -y curl >> $LOG 2>&1
   curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg | apt-key add - && echo "deb https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list >> $LOG 2>&1
-  apt install -y --no-install-recommends docker-ce >> $LOG 2>&1
+  apt update >> $LOG 2>&1
+  apt install -y --no-install-recommends --purge docker-ce >> $LOG 2>&1
   systemctl enable docker >> $LOG 2>&1
   systemctl restart docker >> $LOG 2>&1
  fi
- apt install -y unattended-upgrades fail2ban needrestart >> $LOG 2>&1
+if [ ! -e /etc/docker/daemon.json ]; then
+ echo Limitando logs de docker a 10 MB y tres arhivos
+ cat <<EOF >/etc/docker/daemon.json
+{
+ "log-driver": "json-file",
+ "log-opts":
+ {
+  "max-size": "10m",
+  "max-file": "3"
+ }
+}
+EOF
+fi
+ echo Actualizando el sistema con apt, esto suele tardar...
+ apt update >> $LOG 2>&1
+ apt --purge full-upgrade -y >> $LOG 2>&1
+ apt install -y unattended-upgrades fail2ban >> $LOG 2>&1
  apt --purge autoremove -y >> $LOG 2>&1
  apt clean >> $LOG 2>&1
  echo Utilidades instaladas y sistema asegurado y actualizado.
@@ -59,7 +72,7 @@ APPS=`docker ps -a --format '{{.Names}}' | grep -F -e traffmonetizer -e honeygai
 #APPS+=" "`ps axco command | grep -F -e earnapp -e speedshare -e meson_cdn | sort | uniq | tee /dev/tty`
 APPS+=" "`ps axco command | grep -F -e earnapp -e speedshare | sort | uniq | tee /dev/tty`
 if [[ "$APPS" = " " ]]; then
- echo No installed apps yet.
+ echo No hay aplicaciones instaladas.
 fi
 
 ## TraffMonetizer
@@ -158,57 +171,6 @@ else
    docker stop watchtowerHG >> $LOG 2>&1
    docker rm watchtowerHG >> $LOG 2>&1
    echo HoneyGain desinstalado.
-  fi
- fi
-fi
-
-## ProxyLite
-echo
-if [[ "$APPS" =~ .*"proxylite".* ]]; then
- echo "ProxyLite ya estaba instalado ¿Quiere reinstalarlo, por ejemplo para alterar sus parámetros? [si/NO] :"
-else
- echo "¿Quiere instalar ProxyLite? [si/NO] :"
-fi
-read inspl
-insplmin=$(echo $inspl | tr '[:upper:]' '[:lower:]')
-if [[ $insplmin = "si" ]]; then
- echo Es necesario registro previo en https://proxylite.ru/?r=VXCFMG4X
- echo ID de tu usuario:
- read idpl
- if [[ $idpl == "" ]]; then
-  echo No puede dejar el ID en blanco. Vuelva a ejecutar el script.
-  exit 0
- fi
- echo Instalando imagen de docker proxylite con el ID $idpl y actualizador watchtowerPL...
- cp -a /etc/rc.local /etc/rc.local.ORIG >> $LOG 2>&1
- grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
- grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
- rm -f /etc/rc.local.AUX >> $LOG 2>&1
- echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
- echo 'exit 0' >> /etc/rc.local.OK
- chmod +x /etc/rc.local.OK >> $LOG 2>&1
- cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
- docker run --privileged --rm tonistiigi/binfmt --install amd64  >> $LOG 2>&1
- docker stop proxylite  >> $LOG 2>&1
- docker rm proxylite  >> $LOG 2>&1
- docker run -de "USER_ID=$idpl" --restart unless-stopped --platform linux/amd64 --name proxylite proxylite/proxyservice >> $LOG 2>&1
- docker stop watchtowerPL  >> $LOG 2>&1
- docker rm watchtowerPL  >> $LOG 2>&1
- docker run -d --name watchtowerPL --restart=unless-stopped -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower proxylite watchtowerPL --cleanup --include-stopped --include-restarting --revive-stopped  --scope proxylite --interval 86420  >> $LOG 2>&1
- echo ProxyLite instalado.
-else
- if [[ "$APPS" =~ .*"proxylite".* ]]; then
-  echo "¿Quiere eliminar completamente ProxyLite? [si/NO] :"
-  read desinspl
-  desinsplmin=$(echo $desinspl | tr '[:upper:]' '[:lower:]')
-  if [[ $desinsplmin = "si" ]]; then
-   echo Desinstalando imagen de docker proxylite y actualizador watchtowerPL...
-   docker stop proxylite >> $LOG 2>&1
-   docker rm proxylite >> $LOG 2>&1
-   docker rmi proxylite/proxyservice >> $LOG 2>&1
-   docker stop watchtowerPL >> $LOG 2>&1
-   docker rm watchtowerPL >> $LOG 2>&1
-   echo ProxyLite desinstalado.
   fi
  fi
 fi
@@ -314,6 +276,15 @@ if [[ $inspsmin = "si" ]]; then
   exit 0
  fi
  echo Instalando imagen de docker packetstream con el CID $cidps y actualizador watchtowerPS...
+ cp -a /etc/rc.local /etc/rc.local.BACK.PR >> $LOG 2>&1
+ grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
+ grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
+ rm -f /etc/rc.local.AUX >> $LOG 2>&1
+ echo 'docker run --privileged --rm  tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
+ echo 'exit 0' >> /etc/rc.local.OK
+ chmod +x /etc/rc.local.OK >> $LOG 2>&1
+ cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
+ docker run --privileged --rm tonistiigi/binfmt --install amd64 >> $LOG 2>&1
  docker stop packetstream >> $LOG 2>&1
  docker rm packetstream >> $LOG 2>&1
  docker run -de CID=$cidps --restart unless-stopped --platform linux/arm64 --name packetstream packetstream/psclient:latest >> $LOG 2>&1
@@ -406,7 +377,7 @@ if [[ $insprmin = "si" ]]; then
  rm -f /etc/rc.local.AUX >> $LOG 2>&1
  echo 'docker run --privileged --rm  tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
  echo 'exit 0' >> /etc/rc.local.OK
- chmod +x /etc/rc.local.OK > $LOG  2>&1
+ chmod +x /etc/rc.local.OK >> $LOG 2>&1
  cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
  docker run --privileged --rm tonistiigi/binfmt --install amd64 >> $LOG 2>&1
  docker stop proxyrack >> $LOG 2>&1
@@ -432,6 +403,57 @@ else
    docker stop watchtowerPR >> $LOG 2>&1
    docker rm watchtowerPR >> $LOG 2>&1
    echo ProxyRack desinstalado.
+  fi
+ fi
+fi
+
+## ProxyLite
+echo
+if [[ "$APPS" =~ .*"proxylite".* ]]; then
+ echo "ProxyLite ya estaba instalado ¿Quiere reinstalarlo, por ejemplo para alterar sus parámetros? [si/NO] :"
+else
+ echo "¿Quiere instalar ProxyLite? [si/NO] :"
+fi
+read inspl
+insplmin=$(echo $inspl | tr '[:upper:]' '[:lower:]')
+if [[ $insplmin = "si" ]]; then
+ echo Es necesario registro previo en https://proxylite.ru/?r=VXCFMG4X
+ echo ID de tu usuario:
+ read idpl
+ if [[ $idpl == "" ]]; then
+  echo No puede dejar el ID en blanco. Vuelva a ejecutar el script.
+  exit 0
+ fi
+ echo Instalando imagen de docker proxylite con el ID $idpl y actualizador watchtowerPL...
+ cp -a /etc/rc.local /etc/rc.local.ORIG >> $LOG 2>&1
+ grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
+ grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
+ rm -f /etc/rc.local.AUX >> $LOG 2>&1
+ echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
+ echo 'exit 0' >> /etc/rc.local.OK
+ chmod +x /etc/rc.local.OK >> $LOG 2>&1
+ cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
+ docker run --privileged --rm tonistiigi/binfmt --install amd64  >> $LOG 2>&1
+ docker stop proxylite  >> $LOG 2>&1
+ docker rm proxylite  >> $LOG 2>&1
+ docker run -de "USER_ID=$idpl" --restart unless-stopped --platform linux/amd64 --name proxylite proxylite/proxyservice >> $LOG 2>&1
+ docker stop watchtowerPL  >> $LOG 2>&1
+ docker rm watchtowerPL  >> $LOG 2>&1
+ docker run -d --name watchtowerPL --restart=unless-stopped -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower proxylite watchtowerPL --cleanup --include-stopped --include-restarting --revive-stopped  --scope proxylite --interval 86420  >> $LOG 2>&1
+ echo ProxyLite instalado.
+else
+ if [[ "$APPS" =~ .*"proxylite".* ]]; then
+  echo "¿Quiere eliminar completamente ProxyLite? [si/NO] :"
+  read desinspl
+  desinsplmin=$(echo $desinspl | tr '[:upper:]' '[:lower:]')
+  if [[ $desinsplmin = "si" ]]; then
+   echo Desinstalando imagen de docker proxylite y actualizador watchtowerPL...
+   docker stop proxylite >> $LOG 2>&1
+   docker rm proxylite >> $LOG 2>&1
+   docker rmi proxylite/proxyservice >> $LOG 2>&1
+   docker stop watchtowerPL >> $LOG 2>&1
+   docker rm watchtowerPL >> $LOG 2>&1
+   echo ProxyLite desinstalado.
   fi
  fi
 fi
