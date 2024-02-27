@@ -1,8 +1,8 @@
 #!/bin/bash
 #
 # Script de Instalación de MultiMonedas en hotspot Browan MerryIoT
-# EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, Filecoin Station, SpeedShare y BitPing (Meson y Streamr también serán incluidos, MASQ y Grass serán los siguientes)
-# Versión: 1.4
+# EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, Filecoin Station, SpeedShare, Grass y BitPing (Meson y Streamr también serán incluidos, MASQ y Grass serán los siguientes)
+# Versión: 1.5
 # Licencia: GPLv3
 #
 
@@ -13,8 +13,8 @@ LOG=/var/log/multimoneda.log
 #exec 1> >(tee $LOG) 2>&1
 
 # Descomente para Streamr y Meson (experto):
-#echo "Instalar (o reinstalar) y desinstalar aplicaciones EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, Filecoin Station, SpeedShare, Meson, Streamr y BitPing"
-echo "Instalar (o reinstalar) y desinstalar aplicaciones EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, Filecoin Station, SpeedShare y BitPing"
+#echo "Instalar (o reinstalar) y desinstalar aplicaciones EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, Filecoin Station, SpeedShare, Grass, Meson, Streamr y BitPing"
+echo "Instalar (o reinstalar) y desinstalar aplicaciones EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, Filecoin Station, Grass, SpeedShare y BitPing"
 echo
 echo "Escriba un nombre para diferenciar este MerryIoT de otros dispositivos (sin espacios) y presione enter:"
 read nombre
@@ -67,8 +67,8 @@ echo
 echo Aplicaciones instaladas actualmente:
 echo
 # Descomente para Streamr (experto):
-#APPS=`docker ps -a --format '{{.Names}}' | grep -F -e tm -e honeygain -e iproypaw -e packetstream -e repocket -e proxyrack -e proxylite -e myst -e earnfm -e fstation -e bitping -e streamr | tee /dev/tty`
-APPS=`docker ps -a --format '{{.Names}}' | grep -F -e tm -e honeygain -e iproypaw -e packetstream -e repocket -e proxyrack -e proxylite -e myst -e earnfm -e fstation -e bitping | tee /dev/tty`
+#APPS=`docker ps -a --format '{{.Names}}' | grep -F -e tm -e honeygain -e iproypaw -e packetstream -e repocket -e proxyrack -e proxylite -e myst -e earnfm -e fstation -e grass -e bitping -e streamr | tee /dev/tty`
+APPS=`docker ps -a --format '{{.Names}}' | grep -F -e tm -e honeygain -e iproypaw -e packetstream -e repocket -e proxyrack -e proxylite -e myst -e earnfm -e fstation -e grass -e bitping | tee /dev/tty`
 # Descomente para Meson (experto):
 #APPS+=" "`ps axco command | grep -F -e earnapp -e speedshare -e meson_cdn | sort | uniq | tee /dev/tty`
 APPS+=" "`ps axco command | grep -F -e earnapp -e speedshare | sort | uniq | tee /dev/tty`
@@ -450,6 +450,54 @@ else
  fi
 fi
 
+## Grass
+echo
+if [[ "$APPS" =~ .*"grass".* ]]; then
+ echo "Grass ya estaba instalado ¿Quiere reinstalarlo, por ejemplo para alterar sus parámetros? [si/NO] :"
+else
+ echo "¿Quiere instalar Grass? [si/NO] :"
+fi
+read insfs
+insfsmin=$(echo $insfs | tr '[:upper:]' '[:lower:]')
+if [[ $insfsmin = "si" ]]; then
+ echo Es necesario registro previo en https://app.getgrass.io/register/?referralCode=OleETddLHuKjiki
+ echo Email registrado:
+ read emailgrass
+ if [[ $emailgrass == "" ]]; then
+  echo No puede dejar el email en blanco. Vuelva a ejecutar el script.
+  exit 0
+ fi
+ echo Clave con la que se ha registrado:
+ read passgrass
+ if [[ $passgrass == "" ]]; then
+  echo No puede dejar la clave en blanco. Vuelva a ejecutar el script.
+  exit 0
+ fi
+ echo Instalando la imagen de docker grass y el actualizador watchtowerG...
+ docker stop grass >> $LOG 2>&1
+ docker rm grass >> $LOG 2>&1
+ docker run -d -e GRASS_USER="$emailgrass" -e GRASS_PASS="$passgrass" -e ALLOW_DEBUG=False --restart unless-stopped --name grass camislav/grass >> $LOG 2>&1
+ docker stop watchtowerG >> $LOG 2>&1
+ docker rm watchtowerG >> $LOG 2>&1
+ docker run -d --restart unless-stopped --name watchtowerG -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower grass watchtowerG --cleanup --include-stopped --include-restarting --revive-stopped --interval 86490 --scope grass >> $LOG 2>&1
+ echo Grass instalado.
+else
+ if [[ "$APPS" =~ .*"fstation".* ]]; then
+  echo "¿Quiere eliminar completamente Grass? [si/NO] :"
+  read desinsg
+  desinsgmin=$(echo $desinsg | tr '[:upper:]' '[:lower:]')
+  if [[ $desinsgmin = "si" ]]; then
+   echo Desinstalando imagen de docker grass y actualizador watchtowerG...
+   docker stop grass >> $LOG 2>&1
+   docker rm grass >> $LOG 2>&1
+   docker rmi camislav/grass >> $LOG 2>&1
+   docker stop watchtowerG >> $LOG 2>&1
+   docker rm watchtowerG >> $LOG 2>&1
+   echo Grass desinstalado.
+  fi
+ fi
+fi
+
 ## Meson: NO LO INSTALAMOS POR ESTAR EN BETA
 #echo
 #if [[ "$APPS" =~ .*"meson_cdn".* ]]; then
@@ -474,6 +522,8 @@ fi
 # fi
 # echo Instalando el servicio nativo de Meson, no hay imagen de docker, con el token $tokenms y el puerto $portms...
 # /root/meson_cdn-linux-arm64/service stop meson_cdn >> $LOG 2>&1
+# /root/meson_cdn-linux-arm64/service remove meson_cdn >> $LOG 2>&1
+# rm -rf /root/meson_cdn-linux-arm64
 # cd /root/ >> $LOG 2>&1
 # wget 'https://staticassets.meson.network/public/meson_cdn/v3.1.20/meson_cdn-linux-arm64.tar.gz' >> $LOG 2>&1
 # tar -zxf meson_cdn-linux-arm64.tar.gz >> $LOG 2>&1
