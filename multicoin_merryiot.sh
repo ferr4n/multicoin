@@ -1,8 +1,8 @@
 #!/bin/bash
 #
 # Multicoin Installation Script on Browan MerryIoT hotspot
-# EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, Filecoin Station, SpeedShare and BitPing (Meson and Streamr will be included too, MASQ and Grass will be next)
-# Version: 1.4
+# EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, Filecoin Station, SpeedShare, Grass and BitPing (Meson and Streamr will be included too, MASQ and Grass will be next)
+# Version: 1.5
 # License: GPLv3
 #
 
@@ -13,8 +13,8 @@ LOG=/var/log/multicoin.log
 #exec 1> >(tee $LOG) 2>&1
 
 # Uncomment for Streamr and Meson (expert):
-#echo "Install (or reinstall) and uninstall apps EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, Filecoin Station, SpeedShare, Meson, Streamr and BitPing"
-echo "Install (or reinstall) and uninstall apps EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, Filecoin Station, SpeedShare and BitPing"
+#echo "Install (or reinstall) and uninstall apps EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, Filecoin Station, SpeedShare, Meson, Streamr, Grass and BitPing"
+echo "Install (or reinstall) and uninstall apps EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, Filecoin Station, SpeedShare, Grass and BitPing"
 echo
 echo "Write a name for this system (without spaces, tipically the hostname) and press enter:"
 read name
@@ -67,8 +67,8 @@ echo
 echo Currently installed apps:
 echo
 # Uncomment for Streamr (expert):
-#APPS=`docker ps -a --format '{{.Names}}' | grep -F -e tm -e honeygain -e iproypaw -e packetstream -e repocket -e proxyrack -e proxylite -e myst -e earnfm -e fstation -e bitping -e streamr | tee /dev/tty`
-APPS=`docker ps -a --format '{{.Names}}' | grep -F -e tm -e honeygain -e iproypaw -e packetstream -e repocket -e proxyrack -e proxylite -e myst -e earnfm -e fstation -e bitping | tee /dev/tty`
+#APPS=`docker ps -a --format '{{.Names}}' | grep -F -e tm -e honeygain -e iproypaw -e packetstream -e repocket -e proxyrack -e proxylite -e myst -e earnfm -e fstation -e bitping -e grass -e streamr | tee /dev/tty`
+APPS=`docker ps -a --format '{{.Names}}' | grep -F -e tm -e honeygain -e iproypaw -e packetstream -e repocket -e proxyrack -e proxylite -e myst -e earnfm -e fstation -e grass -e bitping | tee /dev/tty`
 # Uncomment for Meson (expert):
 #APPS+=" "`ps axco command | grep -F -e earnapp -e speedshare -e meson_cdn | sort | uniq | tee /dev/tty`
 APPS+=" "`ps axco command | grep -F -e earnapp -e speedshare | sort | uniq | tee /dev/tty`
@@ -446,6 +446,54 @@ else
    echo Desinstalando SpeedShare...
    killall speedshare >> $LOG 2>&1
    rm -f /usr/local/bin/speedshare >> $LOG 2>&1
+   echo Done.
+  fi
+ fi
+fi
+
+## Grass
+echo
+if [[ "$APPS" =~ .*"grass".* ]]; then
+ echo "Grass was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
+else
+ echo "Do you want to install Grass? [yes/NO] :"
+fi
+read insfs
+insfsmin=$(echo $insfs | tr '[:upper:]' '[:lower:]')
+if [[ $insfsmin = "yes" ]]; then
+ echo Please create an account here: https://app.getgrass.io/register/?referralCode=OleETddLHuKjiki
+ echo Account email:
+ read emailgrass
+ if [[ $emailgrass == "" ]]; then
+  echo Email cannot be blank, please launch the script again.
+  exit 0
+ fi
+ echo Account password:
+ read passgrass
+ if [[ $passgrass == "" ]]; then
+  echo Password cannot be blank, please launch the script again.
+  exit 0
+ fi
+ echo Installing docker image grass and its updater watchtowerG...
+ docker stop grass >> $LOG 2>&1
+ docker rm grass >> $LOG 2>&1
+ docker run -d -e GRASS_USER="$emailgrass" -e GRASS_PASS="$passgrass" -e ALLOW_DEBUG=False --restart unless-stopped --name grass camislav/grass >> $LOG 2>&1
+ docker stop watchtowerG >> $LOG 2>&1
+ docker rm watchtowerG >> $LOG 2>&1
+ docker run -d --restart unless-stopped --name watchtowerG -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower grass watchtowerG --cleanup --include-stopped --include-restarting --revive-stopped --interval 86490 --scope grass >> $LOG 2>&1
+ echo Done.
+else
+ if [[ "$APPS" =~ .*"fstation".* ]]; then
+  echo "Do you want to completely remove  Grass? [yes/NO] :"
+  read desinsg
+  desinsgmin=$(echo $desinsg | tr '[:upper:]' '[:lower:]')
+  if [[ $desinsgmin = "yes" ]]; then
+   echo Uninstalling docker image grass and its updater watchtowerG...
+   docker stop grass >> $LOG 2>&1
+   docker rm grass >> $LOG 2>&1
+   docker rmi camislav/grass >> $LOG 2>&1
+   docker stop watchtowerG >> $LOG 2>&1
+   docker rm watchtowerG >> $LOG 2>&1
    echo Done.
   fi
  fi
