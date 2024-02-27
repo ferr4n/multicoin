@@ -6,7 +6,7 @@ Platform: Debian compatible OS on ARM64 architecture and Browan's MerryIoT hotsp
 
 Languages: English and Spanish.
 
-Supported Apps: TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare, Grass and BitPing.
+Supported Apps: [TraffMonetizer](https://traffmonetizer.com/?aff=1042706), [HoneyGain](https://r.honeygain.me/FRANS5CAB4), [EarnApp](https://earnapp.com/i/zJDVLbf9), [Pawns/IPRoyal](https://pawns.app/?r=1262397), [PacketStream](https://packetstream.io/?psr=4tx2), [RePocket](https://link.repocket.co/N6up), [Proxyrack](https://peer.proxyrack.com/ref/zc9zfiz8nlp8of0mk2mujzbll9iv8sd85vvepfdg), [ProxyLite](https://proxylite.ru/?r=VXCFMG4X&utm_source=G), [Mysterium](https://mystnodes.co/?referral_code=qs4DTlbdhLyEsK0QFFVZYZlsY1MRBrbajZqXhZGc), [EarnFM](https://earn.fm/ref/FRAN6E6B), [Filecoin Station](https://www.filstation.app/), [SpeedShare](https://speedshare.app/?ref=Ferran), [Grass](https://app.getgrass.io/register/?referralCode=OleETddLHuKjiki) and [BitPing](https://app.bitping.com?r=hxQvBwhm).
 
 Version: 1.5
 
@@ -42,7 +42,7 @@ Plataforma: Sistema Operativo compatible con Debian y arquitectura ARM64 y hotsp
 
 Idiomas: Español e Inglés.
 
-Aplicaciones: TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare, Grass y BitPing.
+Aplicaciones Soportadas: [TraffMonetizer](https://traffmonetizer.com/?aff=1042706), [HoneyGain](https://r.honeygain.me/FRANS5CAB4), [EarnApp](https://earnapp.com/i/zJDVLbf9), [Pawns/IPRoyal](https://pawns.app/?r=1262397), [PacketStream](https://packetstream.io/?psr=4tx2), [RePocket](https://link.repocket.co/N6up), [Proxyrack](https://peer.proxyrack.com/ref/zc9zfiz8nlp8of0mk2mujzbll9iv8sd85vvepfdg), [ProxyLite](https://proxylite.ru/?r=VXCFMG4X&utm_source=G), [Mysterium](https://mystnodes.co/?referral_code=qs4DTlbdhLyEsK0QFFVZYZlsY1MRBrbajZqXhZGc), [EarnFM](https://earn.fm/ref/FRAN6E6B), [Filecoin Station](https://www.filstation.app/), [SpeedShare](https://speedshare.app/?ref=Ferran), [Grass](https://app.getgrass.io/register/?referralCode=OleETddLHuKjiki) y [BitPing](https://app.bitping.com?r=hxQvBwhm).
 
 Versión: 1.5
 
