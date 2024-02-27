@@ -1,14 +1,14 @@
 # EN
 ## Multicoin Mining Script
-Install, reinstall and/or uninstall 13 apps that reward sharing your connection.
+Install, reinstall and/or uninstall 14 apps that reward sharing your connection.
 
 Platform: Debian compatible OS on ARM64 architecture and Browan's MerryIoT hotspot.
 
 Languages: English and Spanish.
 
-Supported Apps: TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare and BitPing.
+Supported Apps: TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare, Grass and BitPing.
 
-Version: 1.4
+Version: 1.5
 
 License: GPL v3
 
@@ -36,15 +36,15 @@ Access the terminal* of your MerryIoT hotspot and run the following commands:
 
 # ES
 ## Script de Minado Multimoneda
-Instala, reinstala y/o desinstala 13 aplicaciones que recompensan compartir Internet.
+Instala, reinstala y/o desinstala 14 aplicaciones que recompensan compartir Internet.
 
 Plataforma: Sistema Operativo compatible con Debian y arquitectura ARM64 y hotspot MerryIoT de Browan.
 
 Idiomas: Español e Inglés.
 
-Aplicaciones: TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare y BitPing.
+Aplicaciones: TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM, Filecoin Station, SpeedShare, Grass y BitPing.
 
-Versión: 1.4
+Versión: 1.5
 
 Licencia: GPL v3
 
