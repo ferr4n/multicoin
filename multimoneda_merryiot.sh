@@ -476,7 +476,7 @@ if [[ $insfsmin = "si" ]]; then
  echo Instalando la imagen de docker grass y el actualizador watchtowerG...
  docker stop grass >> $LOG 2>&1
  docker rm grass >> $LOG 2>&1
- docker run -d -e GRASS_USER="$emailgrass" -e GRASS_PASS="$passgrass" -e ALLOW_DEBUG=False --restart unless-stopped --name grass camislav/grass >> $LOG 2>&1
+ docker run -d -p 8080:80 -e GRASS_USER="$emailgrass" -e GRASS_PASS="$passgrass" -e ALLOW_DEBUG=False --restart unless-stopped --name grass camislav/grass >> $LOG 2>&1
  docker stop watchtowerG >> $LOG 2>&1
  docker rm watchtowerG >> $LOG 2>&1
  docker run -d --restart unless-stopped --name watchtowerG -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower grass watchtowerG --cleanup --include-stopped --include-restarting --revive-stopped --interval 86490 --scope grass >> $LOG 2>&1
