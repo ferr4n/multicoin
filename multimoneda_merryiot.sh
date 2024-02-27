@@ -2,7 +2,7 @@
 #
 # Script de Instalación de MultiMonedas en hotspot Browan MerryIoT
 # EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, Filecoin Station, SpeedShare, Grass y BitPing (Meson y Streamr también serán incluidos, MASQ y Grass serán los siguientes)
-# Versión: 1.5
+# Versión: 1.5 
 # Licencia: GPLv3
 #
 
