@@ -2,7 +2,7 @@
 #
 # Multicoin Installation Script on Browan MerryIoT hotspot
 # EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, Filecoin Station, SpeedShare, Grass and BitPing (Meson and Streamr will be included too, MASQ and Grass will be next)
-# Version: 1.5
+# Version: 1.5 
 # License: GPLv3
 #
 
