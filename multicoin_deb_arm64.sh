@@ -2,7 +2,7 @@
 #
 # Multicoin Installation Script on Debian ARM64
 # TraffMonetizer, HoneyGain, EarnApp, Pawns/IPRoyal, PacketStream, RePocket, Proxyrack, ProxyLite, Mysterium, EarnFM and BitPing (Meson and Streamr will be included too, MASQ and Grass will be next)
-# Version: 1.4
+# Version: 1.5
 # License: GPLv3
 #
 
@@ -629,6 +629,54 @@ else
    echo Desinstalando SpeedShare...
    killall speedshare >> $LOG 2>&1
    rm -f /usr/local/bin/speedshare >> $LOG 2>&1
+   echo Done.
+  fi
+ fi
+fi
+
+## Grass
+echo
+if [[ "$APPS" =~ .*"grass".* ]]; then
+ echo "Grass was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
+else
+ echo "Do you want to install Grass? [yes/NO] :"
+fi
+read insfs
+insfsmin=$(echo $insfs | tr '[:upper:]' '[:lower:]')
+if [[ $insfsmin = "yes" ]]; then
+ echo Please create an account here: https://app.getgrass.io/register/?referralCode=OleETddLHuKjiki
+ echo Account email:
+ read emailgrass
+ if [[ $emailgrass == "" ]]; then
+  echo Email cannot be blank, please launch the script again.
+  exit 0
+ fi
+ echo Account password:
+ read passgrass
+ if [[ $passgrass == "" ]]; then
+  echo Password cannot be blank, please launch the script again.
+  exit 0
+ fi
+ echo Installing docker image grass and its updater watchtowerG...
+ docker stop grass >> $LOG 2>&1
+ docker rm grass >> $LOG 2>&1
+ docker run -d -e GRASS_USER="$emailgrass" -e GRASS_PASS="$passgrass" -e ALLOW_DEBUG=False --restart unless-stopped --name grass camislav/grass >> $LOG 2>&1
+ docker stop watchtowerG >> $LOG 2>&1
+ docker rm watchtowerG >> $LOG 2>&1
+ docker run -d --restart unless-stopped --name watchtowerG -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower grass watchtowerG --cleanup --include-stopped --include-restarting --revive-stopped --interval 86490 --scope grass >> $LOG 2>&1
+ echo Done.
+else
+ if [[ "$APPS" =~ .*"fstation".* ]]; then
+  echo "Do you want to completely remove  Grass? [yes/NO] :"
+  read desinsg
+  desinsgmin=$(echo $desinsg | tr '[:upper:]' '[:lower:]')
+  if [[ $desinsgmin = "yes" ]]; then
+   echo Uninstalling docker image grass and its updater watchtowerG...
+   docker stop grass >> $LOG 2>&1
+   docker rm grass >> $LOG 2>&1
+   docker rmi camislav/grass >> $LOG 2>&1
+   docker stop watchtowerG >> $LOG 2>&1
+   docker rm watchtowerG >> $LOG 2>&1
    echo Done.
   fi
  fi
