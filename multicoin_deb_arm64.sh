@@ -52,6 +52,15 @@ if [ ! -e /etc/docker/daemon.json ]; then
 }
 EOF
 fi
+if [ ! -e /etc/dphys-swapfile ]; then
+ echo Inscreasing dphys swap size to 4 GB (max. 8 GB)
+ cp -a /etc/dphys-swapfile /etc/dphys-swapfile.ORIG
+ cat <<EOF >/etc/dphys-swapfile
+CONF_SWAPSIZE=4096
+CONF_SWAPFACTOR=4
+CONF_MAXSWAP=8192
+EOF
+fi
  echo Updating packages with apt, this may take a while...
  apt update >> $LOG 2>&1
  apt --purge full-upgrade -y >> $LOG 2>&1
