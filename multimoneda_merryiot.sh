@@ -329,7 +329,7 @@ if [[ $insefmin = "si" ]]; then
  echo Es necesario registro previo en https://earn.fm/ref/FRAN6E6B
  echo Cuando lo haya hecho pegue su API Key y pulse enter para continuar.
  read efapi
-if [[ $apirp == "" ]]; then
+if [[ $efapi == "" ]]; then
   echo No puede dejar la clave API en blanco. Vuelva a ejecutar el script.
   exit 0
  fi
