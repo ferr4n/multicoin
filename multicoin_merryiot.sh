@@ -1,8 +1,11 @@
 #!/bin/bash
 #
 # Multicoin Installation Script on Browan MerryIoT hotspot
-# EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, Filecoin Station, SpeedShare, Grass and BitPing (Meson and Streamr will be included too, MASQ and Grass will be next)
-# Version: 1.5
+# EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, SpeedShare, Filecoin Station, Grass and BitPing.
+# Grass, Meson and MASQ* are in Testnet phase without real payments yet.
+# Streamr and Presearch* require to invest -or stake- a significant amount to receive rewards.
+# *In future versions, also the ones without linux support yet: bytelixir.com/r/Z0FR2SD6FECW , cashraven.io , spider.com , community.theta.tv/theta-edge-node , nodle.com
+# Version: 1.5.1
 # License: GPLv3
 #
 
@@ -12,17 +15,17 @@ LOG=/var/log/multicoin.log
 # Uncomment to log the output of absolutely all the commands (useful for debugging purposes):
 #exec 1> >(tee $LOG) 2>&1
 
-# Uncomment for Streamr and Meson (expert):
-#echo "Install (or reinstall) and uninstall apps EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, Filecoin Station, SpeedShare, Meson, Streamr, Grass and BitPing"
-echo "Install (or reinstall) and uninstall apps EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, Filecoin Station, SpeedShare, Grass and BitPing"
+# Uncomment for Streamr (expert):
+#echo "Install (or reinstall) and uninstall apps EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, SpeedShare, Filecoin Station, Grass, Meson, Streamr and BitPing"
+echo "Install (or reinstall) and uninstall apps EarnApp, PacketStream, RePocket, Proxyrack, ProxyLite, EarnFM, SpeedShare, Filecoin Station, Grass, Meson and BitPing"
 echo
 echo "Write a name for this system (without spaces, tipically the hostname) and press enter:"
 read name
-ident=$(cat /etc/hostname)
 if [[ $name == "" ]]; then
  echo The name cannot be blank, please launch the script again.
  exit 0
 fi
+ident=$(cat /etc/hostname)
 
 ## Update system and install security tools
 echo
@@ -67,21 +70,20 @@ echo
 echo Currently installed apps:
 echo
 # Uncomment for Streamr (expert):
-#APPS=`docker ps -a --format '{{.Names}}' | grep -F -e tm -e honeygain -e iproypaw -e packetstream -e repocket -e proxyrack -e proxylite -e myst -e earnfm -e fstation -e bitping -e grass -e streamr | tee /dev/tty`
-APPS=`docker ps -a --format '{{.Names}}' | grep -F -e tm -e honeygain -e iproypaw -e packetstream -e repocket -e proxyrack -e proxylite -e myst -e earnfm -e fstation -e grass -e bitping | tee /dev/tty`
-# Uncomment for Meson (expert):
-#APPS+=" "`ps axco command | grep -F -e earnapp -e speedshare -e meson_cdn | sort | uniq | tee /dev/tty`
-APPS+=" "`ps axco command | grep -F -e earnapp -e speedshare | sort | uniq | tee /dev/tty`
+#APPS=`docker ps -a --format '{{.Names}}' | grep -F -e tm -e honeygain -e iproypaw -e packetstream -e repocket -e proxyrack -e proxylite -e myst -e earnfm -e filecoinstation -e bitping -e grass -e streamr | tee /dev/tty`
+APPS=`docker ps -a --format '{{.Names}}' | grep -F -e tm -e honeygain -e iproypaw -e packetstream -e repocket -e proxyrack -e proxylite -e myst -e earnfm -e filecoinstation -e grass -e bitping | tee /dev/tty`
+APPS+=" "`ps axco command | grep -F -e earnapp -e speedshare -e meson_cdn | sort | uniq | tee /dev/tty`
 if [[ "$APPS" = " " ]]; then
  echo No app installed.
 fi
 
 ## EarnApp
 echo
+echo EarnApp: https://earnapp.com/i/zJDVLbf9
 if [[ "$APPS" =~ .*"earnapp".* ]]; then
- echo "EarnApp was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
+ echo "It was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
 else
- echo "Do you want to install EarnApp? [yes/NO] :"
+ echo "Do you want to install it? [yes/NO] :"
 fi
 read insea
 inseamin=$(echo $insea | tr '[:upper:]' '[:lower:]')
@@ -95,14 +97,14 @@ if [[ $inseamin = "yes" ]]; then
  fi
  wget -qO- https://brightdata.com/static/earnapp/install.sh > /tmp/earnapp.sh
  bash /tmp/earnapp.sh
- echo Done.
- echo IMPORTANTE:
+ echo EarnApp installed and running.
+ echo IMPORTANT:
  echo Copy the link above and paste it to the address bar of the browser logged in earnapp.
  echo When it is done press enter to continue.
  read continuar
 else
  if [[ "$APPS" =~ .*"earnapp".* ]]; then
-  echo "Do you want to completely remove EarnApp? [yes/NO] :"
+  echo "Do you want to completely remove it? [yes/NO] :"
   read desinsea
   desinseamin=$(echo $desinsea | tr '[:upper:]' '[:lower:]')
   if [[ $desinseamin = "yes" ]]; then
@@ -115,10 +117,11 @@ fi
 
 ## PacketStream
 echo
+echo PacketStream: https://packetstream.io/?psr=4tx2
 if [[ "$APPS" =~ .*"packetstream".* ]]; then
- echo "PacketStream was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
+ echo "It was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
 else
- echo "Do you want to install PacketStream? [yes/NO] :"
+ echo "Do you want to install it? [yes/NO] :"
 fi
 read insps
 inspsmin=$(echo $insps | tr '[:upper:]' '[:lower:]')
@@ -130,7 +133,7 @@ if [[ $inspsmin = "yes" ]]; then
   echo CID cannot be blank, please launch the script again.
   exit 0
  fi
- echo Installing docker image packetstream with CID $cidps and its updater watchtowerPS...
+ echo Installing docker image packetstream with CID $cidps and its updater updaterPS...
  cp -a /etc/rc.local /etc/rc.local.BACK.PR >> $LOG 2>&1
  grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
  grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
@@ -138,28 +141,27 @@ if [[ $inspsmin = "yes" ]]; then
  echo 'docker run --privileged --rm  tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
  echo 'exit 0' >> /etc/rc.local.OK
  chmod +x /etc/rc.local.OK > $LOG  2>&1
- chattr +e /etc/rc.local.OK >> $LOG 2>&1
  cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
  docker run --privileged --rm tonistiigi/binfmt --install amd64 >> $LOG 2>&1
  docker stop packetstream >> $LOG 2>&1
  docker rm packetstream >> $LOG 2>&1
  docker run -de CID=$cidps --restart unless-stopped --platform linux/arm64 --name packetstream packetstream/psclient:latest >> $LOG 2>&1
- docker stop watchtowerPS >> $LOG 2>&1
- docker rm watchtowerPS >> $LOG 2>&1
- docker run -d --restart unless-stopped --name watchtowerPS -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower packetstream watchtowerPS --cleanup --include-stopped --include-restarting --revive-stopped --interval 86440 --scope packetstream >> $LOG 2>&1
- echo Done.
+ docker stop updaterPS >> $LOG 2>&1
+ docker rm updaterPS >> $LOG 2>&1
+ docker run -d --restart unless-stopped --name updaterPS -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower packetstream updaterPS --cleanup --include-stopped --include-restarting --revive-stopped --interval 86440 --scope packetstream >> $LOG 2>&1
+ echo PacketStream installed and running.
 else
  if [[ "$APPS" =~ .*"packetstream".* ]]; then
-  echo "Do you want to completely remove PacketStream? [yes/NO] :"
+  echo "Do you want to completely remove it? [yes/NO] :"
   read desinsps
   desinspsmin=$(echo $desinsps | tr '[:upper:]' '[:lower:]')
   if [[ $desinspsmin = "yes" ]]; then 
-   echo Uninstalling docker image packetstream and its updater watchtowerPS...
+   echo Uninstalling docker image packetstream and its updater updaterPS...
    docker stop packetstream >> $LOG 2>&1
    docker rm packetstream >> $LOG 2>&1
    docker rmi packetstream/psclient:latest >> $LOG 2>&1
-   docker stop watchtowerPS >> $LOG 2>&1
-   docker rm watchtowerPS >> $LOG 2>&1
+   docker stop updaterPS >> $LOG 2>&1
+   docker rm updaterPS >> $LOG 2>&1
    echo Done.
   fi
  fi
@@ -167,10 +169,11 @@ fi
 
 ## RePocket
 echo
+echo RePocket: https://link.repocket.co/N6up
 if [[ "$APPS" =~ .*"repocket".* ]]; then
- echo "RePocket was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
+ echo "It was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
 else
- echo "Do you want to install RePocket? [yes/NO] :"
+ echo "Do you want to install it? [yes/NO] :"
 fi
 read insrp
 insrpmin=$(echo $insrp | tr '[:upper:]' '[:lower:]')
@@ -188,26 +191,26 @@ if [[ $insrpmin = "yes" ]]; then
   echo API key cannot be blank, please launch the script again.
   exit 0
  fi
- echo Installing docker image repocket con el email $emailrp and API key $apirp and its updater watchtowerRP...
+ echo Installing docker image repocket con el email $emailrp and API key $apirp and its updater updaterRP...
  docker stop repocket >> $LOG 2>&1
  docker rm repocket >> $LOG 2>&1
  docker run -d -e RP_EMAIL=$emailrp -e RP_API_KEY=$apirp --restart unless-stopped --name repocket repocket/repocket >> $LOG 2>&1
- docker stop watchtowerRP >> $LOG 2>&1
- docker rm watchtowerRP >> $LOG 2>&1
- docker run -d --restart unless-stopped --name watchtowerRP -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower repocket watchtowerRP --cleanup --include-stopped --include-restarting --revive-stopped --interval 86450 --scope repocket >> $LOG 2>&1
- echo Done.
+ docker stop updaterRP >> $LOG 2>&1
+ docker rm updaterRP >> $LOG 2>&1
+ docker run -d --restart unless-stopped --name updaterRP -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower repocket updaterRP --cleanup --include-stopped --include-restarting --revive-stopped --interval 86450 --scope repocket >> $LOG 2>&1
+ echo RePocket installed and running.
 else
  if [[ "$APPS" =~ .*"repocket".* ]]; then
-  echo "Do you want to completely remove RePocket? [yes/NO] :"
+  echo "Do you want to completely remove it? [yes/NO] :"
   read desinsrp
   desinsrpmin=$(echo $desinsrp | tr '[:upper:]' '[:lower:]')
   if [[ $desinrpsmin = "yes" ]]; then
-   echo Uninstalling docker image repocket and its updater watchtowerRP...
+   echo Uninstalling docker image repocket and its updater updaterRP...
    docker stop repocket >> $LOG 2>&1
    docker rm repocket >> $LOG 2>&1
    docker rmi repocket/repocket >> $LOG 2>&1
-   docker stop watchtowerRP >> $LOG 2>&1
-   docker rm watchtowerRP >> $LOG 2>&1
+   docker stop updaterRP >> $LOG 2>&1
+   docker rm updaterRP >> $LOG 2>&1
    echo Done.
   fi
  fi
@@ -215,10 +218,11 @@ fi
 
 ## ProxyRack:
 echo
+echo ProxyRack: https://peer.proxyrack.com/ref/zc9zfiz8nlp8of0mk2mujzbll9iv8sd85vvepfdg
 if [[ "$APPS" =~ .*"proxyrack".* ]]; then
- echo "ProxyRack was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
+ echo "It was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
 else
- echo "Do you want to install ProxyRack? [yes/NO] :"
+ echo "Do you want to install it? [yes/NO] :"
 fi
 read inspr
 insprmin=$(echo $inspr | tr '[:upper:]' '[:lower:]')
@@ -226,7 +230,7 @@ if [[ $insprmin = "yes" ]]; then
  echo Please create an account here: https://peer.proxyrack.com/ref/zc9zfiz8nlp8of0mk2mujzbll9iv8sd85vvepfdg
  echo When it is done press enter to continue.
  read continuar
- echo Installing docker image proxyrack and its updater watchtowerPR...
+ echo Installing docker image proxyrack and its updater updaterPR...
  cp -a /etc/rc.local /etc/rc.local.BACK.PR >> $LOG 2>&1
  grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
  grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
@@ -234,7 +238,6 @@ if [[ $insprmin = "yes" ]]; then
  echo 'docker run --privileged --rm  tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
  echo 'exit 0' >> /etc/rc.local.OK
  chmod +x /etc/rc.local.OK >> $LOG 2>&1
- chattr +e /etc/rc.local.OK >> $LOG 2>&1
  cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
  docker run --privileged --rm tonistiigi/binfmt --install amd64 >> $LOG 2>&1
  docker stop proxyrack >> $LOG 2>&1
@@ -242,23 +245,23 @@ if [[ $insprmin = "yes" ]]; then
  cat /dev/urandom | LC_ALL=C tr -dc 'A-F0-9' | dd bs=1 count=64 2>/dev/null > UUID_PR.txt
  export UUID_PR=`cat UUID_PR.txt`
  docker run -de UUID="$UUID_PR" --restart unless-stopped --platform linux/amd64 --name proxyrack --restart unless-stopped proxyrack/pop >> $LOG 2>&1
- docker stop watchtowerPR >> $LOG 2>&1
- docker rm watchtowerPR >> $LOG 2>&1
- docker run -d --restart unless-stopped --name watchtowerPR -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower proxyrack watchtowerPR --cleanup --include-stopped --include-restarting --revive-stopped --interval 86460 --scope proxyrack >> $LOG 2>&1
- echo ProxyRack instalado.
- echo IMPORTANTE. Dar de alta el dispositivo $name con el ID $UUID_PR en https://peer.proxyrack.com/devices
+ docker stop updaterPR >> $LOG 2>&1
+ docker rm updaterPR >> $LOG 2>&1
+ docker run -d --restart unless-stopped --name updaterPR -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower proxyrack updaterPR --cleanup --include-stopped --include-restarting --revive-stopped --interval 86460 --scope proxyrack >> $LOG 2>&1
+ echo ProxyRack installed and running.
+ echo IMPORTANT. The device $name with ID $UUID_PR must be added at: https://peer.proxyrack.com/devices
 else
  if [[ "$APPS" =~ .*"proxyrack".* ]]; then
-  echo "Do you want to completely remove ProxyRack? [yes/NO] :"
+  echo "Do you want to completely remove it? [yes/NO] :"
   read desinspr
   desinsprmin=$(echo $desinspr | tr '[:upper:]' '[:lower:]')
   if [[ $desinsprmin = "yes" ]]; then
-   echo Uninstalling docker image proxyrack and its updater watchtowerPR... 
+   echo Uninstalling docker image proxyrack and its updater updaterPR... 
    docker stop proxyrack >> $LOG 2>&1
    docker rm proxyrack >> $LOG 2>&1
    docker rmi proxyrack/pop >> $LOG 2>&1
-   docker stop watchtowerPR >> $LOG 2>&1
-   docker rm watchtowerPR >> $LOG 2>&1
+   docker stop updaterPR >> $LOG 2>&1
+   docker rm updaterPR >> $LOG 2>&1
    echo Done.
   fi
  fi
@@ -266,10 +269,11 @@ fi
 
 ## ProxyLite
 echo
+echo ProxyLite: https://proxylite.ru/?r=VXCFMG4X
 if [[ "$APPS" =~ .*"proxylite".* ]]; then
- echo "ProxyLite was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
+ echo "It was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
 else
- echo "Do you want to install ProxyLite? [yes/NO] :"
+ echo "Do you want to install it? [yes/NO] :"
 fi
 read inspl
 insplmin=$(echo $inspl | tr '[:upper:]' '[:lower:]')
@@ -281,7 +285,7 @@ if [[ $insplmin = "yes" ]]; then
   echo User ID cannot be blank, please launch the script again.
   exit 0
  fi
- echo Installing docker image proxylite with ID $idpl and its updater watchtowerPL...
+ echo Installing docker image proxylite with ID $idpl and its updater updaterPL...
  cp -a /etc/rc.local /etc/rc.local.ORIG >> $LOG 2>&1
  grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
  grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
@@ -289,28 +293,27 @@ if [[ $insplmin = "yes" ]]; then
  echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
  echo 'exit 0' >> /etc/rc.local.OK
  chmod +x /etc/rc.local.OK >> $LOG 2>&1
- chattr +e /etc/rc.local.OK >> $LOG 2>&1
  cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
  docker run --privileged --rm tonistiigi/binfmt --install amd64  >> $LOG 2>&1
  docker stop proxylite  >> $LOG 2>&1
  docker rm proxylite  >> $LOG 2>&1
  docker run -de "USER_ID=$idpl" --restart unless-stopped --platform linux/amd64 --name proxylite proxylite/proxyservice >> $LOG 2>&1
- docker stop watchtowerPL  >> $LOG 2>&1
- docker rm watchtowerPL  >> $LOG 2>&1
- docker run -d --name watchtowerPL --restart=unless-stopped -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower proxylite watchtowerPL --cleanup --include-stopped --include-restarting --revive-stopped  --scope proxylite --interval 86420  >> $LOG 2>&1
- echo Done.
+ docker stop updaterPL  >> $LOG 2>&1
+ docker rm updaterPL  >> $LOG 2>&1
+ docker run -d --name updaterPL --restart=unless-stopped -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower proxylite updaterPL --cleanup --include-stopped --include-restarting --revive-stopped  --scope proxylite --interval 86420  >> $LOG 2>&1
+ echo ProxyLite installed and running.
 else
  if [[ "$APPS" =~ .*"proxylite".* ]]; then
-  echo "Do you want to completely remove ProxyLite? [yes/NO] :"
+  echo "Do you want to completely remove it? [yes/NO] :"
   read desinspl
   desinsplmin=$(echo $desinspl | tr '[:upper:]' '[:lower:]')
   if [[ $desinsplmin = "yes" ]]; then
-   echo Uninstalling docker image proxylite and its updater watchtowerPL...
+   echo Uninstalling docker image proxylite and its updater updaterPL...
    docker stop proxylite >> $LOG 2>&1
    docker rm proxylite >> $LOG 2>&1
    docker rmi proxylite/proxyservice >> $LOG 2>&1
-   docker stop watchtowerPL >> $LOG 2>&1
-   docker rm watchtowerPL >> $LOG 2>&1
+   docker stop updaterPL >> $LOG 2>&1
+   docker rm updaterPL >> $LOG 2>&1
    echo Done.
   fi
  fi
@@ -318,10 +321,11 @@ fi
 
 ## EarnFM
 echo
+echo EarnFM: https://earn.fm/ref/FRAN6E6B
 if [[ "$APPS" =~ .*"earnfm".* ]]; then
- echo "EarnFM was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
+ echo "It was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
 else
- echo "Do you want to install EarnFM? [yes/NO] :"
+ echo "Do you want to install it? [yes/NO] :"
 fi
 read insef
 insefmin=$(echo $insef | tr '[:upper:]' '[:lower:]')
@@ -333,69 +337,26 @@ if [[ $efapi == "" ]]; then
   echo API Key cannot be blank, please launch the script again.
   exit 0
  fi
- echo Installing docker image earnfm and its updater watchtowerEF...
+ echo Installing docker image earnfm and its updater updaterEF...
  docker stop earnfm >> $LOG 2>&1
  docker rm earnfm >> $LOG 2>&1
  docker run -de EARNFM_TOKEN="$efapi" --restart unless-stopped --name earnfm earnfm/earnfm-client:latest >> $LOG 2>&1
- docker stop watchtowerEF >> $LOG 2>&1
- docker rm watchtowerEF >> $LOG 2>&1
- docker run -d --restart unless-stopped --name watchtowerEF -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower earnfm watchtowerEF --cleanup --include-stopped --include-restarting --revive-stopped --interval 86480 --scope earnfm >> $LOG 2>&1
- echo Done.
+ docker stop updaterEF >> $LOG 2>&1
+ docker rm updaterEF >> $LOG 2>&1
+ docker run -d --restart unless-stopped --name updaterEF -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower earnfm updaterEF --cleanup --include-stopped --include-restarting --revive-stopped --interval 86480 --scope earnfm >> $LOG 2>&1
+ echo EarnFM installed and running.
 else
  if [[ "$APPS" =~ .*"earnfm".* ]]; then
-  echo "Do you want to completely remove EarnFM? [yes/NO] :"
+  echo "Do you want to completely remove it? [yes/NO] :"
   read desinsef
   desinsefmin=$(echo $desinsef | tr '[:upper:]' '[:lower:]')
   if [[ $desinsefmin = "yes" ]]; then
-   echo Uninstalling docker image earnfm and its updater watchtowerEF...
+   echo Uninstalling docker image earnfm and its updater updaterEF...
    docker stop earnfm >> $LOG 2>&1
    docker rm earnfm >> $LOG 2>&1
    docker rmi earnfm/earnfm-client:latest >> $LOG 2>&1
-   docker stop watchtowerEF >> $LOG 2>&1
-   docker rm watchtowerEF >> $LOG 2>&1
-   echo Done.
-  fi
- fi
-fi
-
-## Filecoin Station
-echo
-if [[ "$APPS" =~ .*"fstation".* ]]; then
- echo "Filecoin Station was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
-else
-else
- echo "Do you want to install Filecoin Station? [yes/NO] :"
-fi
-read insfs
-insfsmin=$(echo $insfs | tr '[:upper:]' '[:lower:]')
-if [[ $insfsmin = "yes" ]]; then
- echo You need to have the token FIL in the Polygon network of your Ethereum wallet, it can be done in chainlist.org
- echo When it is done paste your wallet address and press enter to continue.
- read fswallet
- if [[ $apirp == "" ]]; then
-  echo Wallet address cannot be blank, please launch the script again.
-  exit 0
- fi
- echo Installing docker image fstation and its updater watchtowerFS...
- docker stop fstation >> $LOG 2>&1
- docker rm fstation >> $LOG 2>&1
- docker run -de FIL_WALLET_ADDRESS="$fswallet" --restart unless-stopped --name fstation ghcr.io/filecoin-station/core >> $LOG 2>&1
- docker stop watchtowerFS >> $LOG 2>&1
- docker rm watchtowerFS >> $LOG 2>&1
- docker run -d --restart unless-stopped --name watchtowerFS -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower fstation watchtowerFS --cleanup --include-stopped --include-restarting --revive-stopped --interval 86490 --scope fstation >> $LOG 2>&1
- echo Filecoin Station instalado.
-else
- if [[ "$APPS" =~ .*"fstation".* ]]; then
-  echo "Do you want to completely remove Filecoin Station? [yes/NO] :"
-  read desinsfs
-  desinsfsmin=$(echo $desinsfs | tr '[:upper:]' '[:lower:]')
-  if [[ $desinsfsmin = "yes" ]]; then
-   echo Uninstalling docker image fstation and its updater watchtowerFS...
-   docker stop fstation >> $LOG 2>&1
-   docker rm fstation >> $LOG 2>&1
-   docker rmi ghcr.io/filecoin-station/core >> $LOG 2>&1
-   docker stop watchtowerFS >> $LOG 2>&1
-   docker rm watchtowerFS >> $LOG 2>&1
+   docker stop updaterEF >> $LOG 2>&1
+   docker rm updaterEF >> $LOG 2>&1
    echo Done.
   fi
  fi
@@ -403,10 +364,11 @@ fi
 
 ## SpeedShare
 echo
+echo SpeedShare: https://speedshare.app/?ref=Ferran
 if [[ "$APPS" =~ .*"speedshare".* ]]; then
- echo "SpeedShare was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
+ echo "It was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
 else
- echo "Do you want to install SpeedShare? [yes/NO] :"
+ echo "Do you want to install it? [yes/NO] :"
 fi
 read insss
 insssmin=$(echo $insss | tr '[:upper:]' '[:lower:]')
@@ -434,16 +396,15 @@ cp -a /etc/rc.local /etc/rc.local.ORIG >> $LOG 2>&1
  echo 'speedshare connect --pairing_code $authcode' >> /etc/rc.local.OK
  echo 'exit 0' >> /etc/rc.local.OK
  chmod +x /etc/rc.local.OK >> $LOG 2>&1
- chattr +e /etc/rc.local.OK >> $LOG 2>&1
  cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
- echo Done.
+ echo SpeedShare installed and running.
 else
  if [[ "$APPS" =~ .*"speedshare".* ]]; then
-  echo "Do you want to completely remove SpeedShare? [yes/NO] :"
+  echo "Do you want to completely remove it? [yes/NO] :"
   read desinsss
   desinsssmin=$(echo $desinsss | tr '[:upper:]' '[:lower:]')
   if [[ $desinsssmin = "yes" ]]; then
-   echo Desinstalando SpeedShare...
+   echo Uninstalling SpeedShare...
    killall speedshare >> $LOG 2>&1
    rm -f /usr/local/bin/speedshare >> $LOG 2>&1
    echo Done.
@@ -451,12 +412,57 @@ else
  fi
 fi
 
+## Filecoin Station
+echo
+echo Filecoin Station: https://www.filstation.app
+if [[ "$APPS" =~ .*"filecoinstation".* ]]; then
+ echo "It was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
+else
+else
+ echo "Do you want to install it? [yes/NO] :"
+fi
+read insfs
+insfsmin=$(echo $insfs | tr '[:upper:]' '[:lower:]')
+if [[ $insfsmin = "yes" ]]; then
+ echo You need to have the token FIL in the Polygon network of your Ethereum wallet, it can be done in chainlist.org
+ echo When it is done paste your wallet address and press enter to continue.
+ read fswallet
+ if [[ $apirp == "" ]]; then
+  echo Wallet address cannot be blank, please launch the script again.
+  exit 0
+ fi
+ echo Installing docker image filecoinstation and its updater updaterFS...
+ docker stop filecoinstation >> $LOG 2>&1
+ docker rm filecoinstation >> $LOG 2>&1
+ docker run -de FIL_WALLET_ADDRESS="$fswallet" --restart unless-stopped --name filecoinstation ghcr.io/filecoin-station/core >> $LOG 2>&1
+ docker stop updaterFS >> $LOG 2>&1
+ docker rm updaterFS >> $LOG 2>&1
+ docker run -d --restart unless-stopped --name updaterFS -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower filecoinstation updaterFS --cleanup --include-stopped --include-restarting --revive-stopped --interval 86490 --scope filecoinstation >> $LOG 2>&1
+ echo Filecoin Station installed and running.
+else
+ if [[ "$APPS" =~ .*"filecoinstation".* ]]; then
+  echo "Do you want to completely remove it? [yes/NO] :"
+  read desinsfs
+  desinsfsmin=$(echo $desinsfs | tr '[:upper:]' '[:lower:]')
+  if [[ $desinsfsmin = "yes" ]]; then
+   echo Uninstalling docker image filecoinstation and its updater updaterFS...
+   docker stop filecoinstation >> $LOG 2>&1
+   docker rm filecoinstation >> $LOG 2>&1
+   docker rmi ghcr.io/filecoin-station/core >> $LOG 2>&1
+   docker stop updaterFS >> $LOG 2>&1
+   docker rm updaterFS >> $LOG 2>&1
+   echo Done.
+  fi
+ fi
+fi
+
 ## Grass
 echo
+echo Grass: https://app.getgrass.io/register/?referralCode=OleETddLHuKjiki
 if [[ "$APPS" =~ .*"grass".* ]]; then
- echo "Grass was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
+ echo "It was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
 else
- echo "Do you want to install Grass? [yes/NO] :"
+ echo "Do you want to install it? [yes/NO] :"
 fi
 read insfs
 insfsmin=$(echo $insfs | tr '[:upper:]' '[:lower:]')
@@ -474,80 +480,81 @@ if [[ $insfsmin = "yes" ]]; then
   echo Password cannot be blank, please launch the script again.
   exit 0
  fi
- echo Installing docker image grass and its updater watchtowerG...
+ echo Installing docker image grass and its updater updaterG...
  docker stop grass >> $LOG 2>&1
  docker rm grass >> $LOG 2>&1
  docker run -d -p 8080:80 -e GRASS_USER="$emailgrass" -e GRASS_PASS="$passgrass" -e ALLOW_DEBUG=False --restart unless-stopped --name grass camislav/grass >> $LOG 2>&1
- docker stop watchtowerG >> $LOG 2>&1
- docker rm watchtowerG >> $LOG 2>&1
- docker run -d --restart unless-stopped --name watchtowerG -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower grass watchtowerG --cleanup --include-stopped --include-restarting --revive-stopped --interval 86490 --scope grass >> $LOG 2>&1
- echo Done.
+ docker stop updaterG >> $LOG 2>&1
+ docker rm updaterG >> $LOG 2>&1
+ docker run -d --restart unless-stopped --name updaterG -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower grass updaterG --cleanup --include-stopped --include-restarting --revive-stopped --interval 86490 --scope grass >> $LOG 2>&1
+ echo Grass installed and running.
 else
- if [[ "$APPS" =~ .*"fstation".* ]]; then
-  echo "Do you want to completely remove  Grass? [yes/NO] :"
+ if [[ "$APPS" =~ .*"grass".* ]]; then
+  echo "Do you want to completely remove it? [yes/NO] :"
   read desinsg
   desinsgmin=$(echo $desinsg | tr '[:upper:]' '[:lower:]')
   if [[ $desinsgmin = "yes" ]]; then
-   echo Uninstalling docker image grass and its updater watchtowerG...
+   echo Uninstalling docker image grass and its updater updaterG...
    docker stop grass >> $LOG 2>&1
    docker rm grass >> $LOG 2>&1
    docker rmi camislav/grass >> $LOG 2>&1
-   docker stop watchtowerG >> $LOG 2>&1
-   docker rm watchtowerG >> $LOG 2>&1
+   docker stop updaterG >> $LOG 2>&1
+   docker rm updaterG >> $LOG 2>&1
    echo Done.
   fi
  fi
 fi
 
-## Meson: NOT INSTALLED BECAUSE THE PROJECT IS IN BETA STAGE
-#echo
-#if [ -e /usr/bin/earnapp ]; then
-# echo Meson was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
-#else
-# echo "Do you want to install Meson? [yes/NO] :"
-#fi
-#read insms
-#insmsmin=$(echo $insms | tr '[:upper:]' '[:lower:]')
-#if [[ $insmsmin = "yes" ]]; then
-# echo Please create an account here: https://dashboard.meson.network/register
-# echo Please paste your token, shown in https://dashboard.meson.network/user/account and press enter :
-# read tokenms
-# if [[ $tokenms == "" ]]; then
-#  echo Token cannot be blank, please launch the script again.
-#  exit 0
-# fi
-# echo "Meson needs a TCP port forwarded, it is 448 by default, you can specify another if you wish [448]:"
-# read portms
-# if [[ $portms == "" ]]; then
-#  portms=448
-# fi
-# echo "Installing native Meson app (there is no docker image), with token $tokenms and port $portms ..."
-# /root/meson_cdn-linux-arm64/service stop meson_cdn >> $LOG 2>&1
-# /root/meson_cdn-linux-arm64/service remove meson_cdn >> $LOG 2>&1
-# rm -rf /root/meson_cdn-linux-arm64
-# cd /root/ >> $LOG 2>&1
-# wget 'https://staticassets.meson.network/public/meson_cdn/v3.1.20/meson_cdn-linux-arm64.tar.gz' >> $LOG 2>&1
-# tar -zxf meson_cdn-linux-arm64.tar.gz >> $LOG 2>&1
-# rm -f /root/meson_cdn-linux-arm64.tar.gz >> $LOG 2>&1
-# /root/meson_cdn-linux-arm64/service install meson_cdn >> $LOG 2>&1
-# /root/meson_cdn-linux-arm64/meson_cdn config set --token=$tokenms --https_port=$portms --cache.size=30 >> $LOG 2>&1
-# /root/meson_cdn-linux-arm64/service start meson_cdn >> $LOG 2>&1
-# echo Done.
-# echo IMPORTANT: Do not forget to open TCP PORT $portms in your router, forwarding it to the LOCAL IP of this device.
-#else
-# echo "Do you want to completely remove Meson? [yes/NO] :"
-# read desinsms
-# desinsmsmin=$(echo $desinsms | tr '[:upper:]' '[:lower:]')
-# if [[ $desinsmsmin = "yes" ]]; then
-#  echo Uninstalling Meson...
-#  /root/meson_cdn-linux-arm64/service stop meson_cdn >> $LOG 2>&1
-#  /root/meson_cdn-linux-arm64/service remove meson_cdn >> $LOG 2>&1
-#  rm -rf /root/meson_cdn-linux-arm64
-#  echo Done.
-# fi
-#fi
+## Meson:
+echo
+echo Meson: https://meson.network
+if [[ "$APPS" =~ .*"meson_cdn".* ]]; then
+ echo "It was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
+else
+ echo "Do you want to install it? [yes/NO] :"
+fi
+read insms
+insmsmin=$(echo $insms | tr '[:upper:]' '[:lower:]')
+if [[ $insmsmin = "yes" ]]; then
+ echo Please create an account here: https://dashboard.meson.network/register
+ echo Please paste your token, shown in https://dashboard.meson.network/user/account and press enter :
+ read tokenms
+ if [[ $tokenms == "" ]]; then
+  echo Token cannot be blank, please launch the script again.
+  exit 0
+ fi
+ echo "Meson needs a TCP port forwarded, it is 448 by default, you can specify another if you wish [448]:"
+ read portms
+ if [[ $portms == "" ]]; then
+  portms=448
+ fi
+ echo "Installing native Meson app (there is no docker image), with token $tokenms and port $portms ..."
+ /root/meson_cdn-linux-arm64/service stop meson_cdn >> $LOG 2>&1
+ /root/meson_cdn-linux-arm64/service remove meson_cdn >> $LOG 2>&1
+ rm -rf /root/meson_cdn-linux-arm64
+ cd /root/ >> $LOG 2>&1
+ wget 'https://staticassets.meson.network/public/meson_cdn/v3.1.20/meson_cdn-linux-arm64.tar.gz' >> $LOG 2>&1
+ tar -zxf meson_cdn-linux-arm64.tar.gz >> $LOG 2>&1
+ rm -f /root/meson_cdn-linux-arm64.tar.gz >> $LOG 2>&1
+ /root/meson_cdn-linux-arm64/service install meson_cdn >> $LOG 2>&1
+ /root/meson_cdn-linux-arm64/meson_cdn config set --token=$tokenms --https_port=$portms --cache.size=30 >> $LOG 2>&1
+ /root/meson_cdn-linux-arm64/service start meson_cdn >> $LOG 2>&1
+ echo Meson installed and running.
+ echo IMPORTANT: Do not forget to open TCP PORT $portms in your router, forwarding it to the LOCAL IP of this device.
+else
+ echo "Do you want to completely remove it? [yes/NO] :"
+ read desinsms
+ desinsmsmin=$(echo $desinsms | tr '[:upper:]' '[:lower:]')
+ if [[ $desinsmsmin = "yes" ]]; then
+  echo Uninstalling Meson...
+  /root/meson_cdn-linux-arm64/service stop meson_cdn >> $LOG 2>&1
+  /root/meson_cdn-linux-arm64/service remove meson_cdn >> $LOG 2>&1
+  rm -rf /root/meson_cdn-linux-arm64
+  echo Done.
+ fi
+fi
 
-## Streamr: NOT INSTALLED BECAUSE THE PROJECT IS IN BETA STAGE
+## Streamr: NOT INSTALLED BECAUSE IT HAS NOT BEEN WELL TESTED YET
 ## NOT TRANSLATED FOR THE SAME REASON, IF YOU WANT TO INSTALL IT JUST USE dee.pl OR ANY OTHER TRANSLATOR
 #echo
 #if [[ "$APPS" =~ .*"streamr".* ]]; then
@@ -584,11 +591,11 @@ fi
 # echo "Y finalmente tiene que añadir el nodo en su página de operador, por la parte inferior encontrará la sección: Operator's node addresses"
 # echo "Solo tiene que pulsar en el botón Add node address, pegar la dirección del nodo recién creado, darle a guardar y confirmar la transacción."
 # echp "Pulse enter cuando haya finalizado, para proceder a la ejecución del nodo Streamr"
-# echo "Activando la imagen de docker streamr y el actualizador watchtowerS..."
+# echo "Activando la imagen de docker streamr y el actualizador updaterS..."
 # docker run -d -p "$sport":32200 --name streamr --restart unless-stopped -v /root/.streamrDocker:/home/streamr/.streamr streamr/broker-node:v100.0.0-testnet-three.3
-# docker stop watchtowerS >> $LOG 2>&1
-# docker rm watchtowerS >> $LOG 2>&1
-# docker run -d --restart unless-stopped --name watchtowerS -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower streamr watchtowerS --cleanup --include-stopped --include-restarting --revive-stopped --interval 86510 --scope streamr >> $LOG 2>&1
+# docker stop updaterS >> $LOG 2>&1
+# docker rm updaterS >> $LOG 2>&1
+# docker run -d --restart unless-stopped --name updaterS -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower streamr updaterS --cleanup --include-stopped --include-restarting --revive-stopped --interval 86510 --scope streamr >> $LOG 2>&1
 # echo Streamr instalado.
 # echo No olvide comprar como mínimo 5000 DATA Tokens y enviarlos a la dirección de su operador para poder obtener recompensas.
 #else
@@ -597,12 +604,12 @@ fi
 #  read desinss
 #  desinssmin=$(echo $desinss | tr '[:upper:]' '[:lower:]')
 #  if [[ $desinssmin = "yes" ]]; then
-#   echo Desinstalando imagen de docker streamr y actualizador watchtowerS...
+#   echo Desinstalando imagen de docker streamr y actualizador updaterS...
 #   docker stop streamr >> $LOG 2>&1
 #   docker rm streamr >> $LOG 2>&1
 #   docker rmi streamr/broker-node:v100.0.0-testnet-three.3 >> $LOG 2>&1
-#   docker stop watchtowerS >> $LOG 2>&1
-#   docker rm watchtowerS >> $LOG 2>&1
+#   docker stop updaterS >> $LOG 2>&1
+#   docker rm updaterS >> $LOG 2>&1
 #   echo Streamr desinstalado.
 #  fi
 # fi
@@ -610,10 +617,11 @@ fi
 
 ## BitPing:
 echo
+echo BitPing: https://app.bitping.com?r=hxQvBwhm
 if [[ "$APPS" =~ .*"bitping".* ]]; then
- echo "BitPing was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
+ echo "It was already installed. Do you want to reinstall it, for example to alter some parameter? [yes/NO] :"
 else
- echo "Do you want to install BitPing? [yes/NO] :"
+ echo "Do you want to install it? [yes/NO] :"
 fi
 read insbp
 insbpmin=$(echo $insbp | tr '[:upper:]' '[:lower:]')
@@ -621,7 +629,7 @@ if [[ $insbpmin = "yes" ]]; then
  echo Please create an account here: https://app.bitping.com?r=hxQvBwhm
  echo When it is done press enter to continue.
  read continuar
- echo Installing docker image bitping and its updater watchtowerBP...
+ echo Installing docker image bitping and its updater updaterBP...
  cp -a /etc/rc.local /etc/rc.local.BACK.BP >> $LOG 2>&1
  grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
  grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
@@ -629,12 +637,11 @@ if [[ $insbpmin = "yes" ]]; then
  echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
  echo 'exit 0' >> /etc/rc.local.OK
  chmod +x /etc/rc.local.OK >> $LOG 2>&1
- chattr +e /etc/rc.local.OK >> $LOG 2>&1
  cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
  docker run --privileged --rm tonistiigi/binfmt --install amd64  >> $LOG 2>&1
- docker stop watchtowerBP >> $LOG 2>&1
- docker rm watchtowerBP >> $LOG 2>&1
- docker run -d --restart unless-stopped --name watchtowerBP -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower bitping watchtowerBP --cleanup --include-stopped --include-restarting --revive-stopped --interval 86500 --scope bitping >> $LOG 2>&1
+ docker stop updaterBP >> $LOG 2>&1
+ docker rm updaterBP >> $LOG 2>&1
+ docker run -d --restart unless-stopped --name updaterBP -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower bitping updaterBP --cleanup --include-stopped --include-restarting --revive-stopped --interval 86500 --scope bitping >> $LOG 2>&1
  docker stop bitping >> $LOG 2>&1
  docker rm bitping >> $LOG 2>&1
  echo IMPORTANT:
@@ -643,7 +650,7 @@ if [[ $insbpmin = "yes" ]]; then
  echo Press CTRL+C as soon as you see \'Successfully logged in to Bitping\'
  echo After the app closes please paste the following command and press enter:
  echo
- echo 'docker stop bitping; docker rm bitping; docker run -d --restart unless-stopped --platform linux/amd64 --name bitping -it --mount type=bind,source="/root/bitping/",target=/root/.bitping bitping/bitping-node:latest; echo Done.'
+ echo 'docker stop bitping; docker rm bitping; docker run -d --restart unless-stopped --platform linux/amd64 --name bitping -it --mount type=bind,source="/root/bitping/",target=/root/.bitping bitping/bitping-node:latest; echo BitPing installed and running.'
  echo
  echo Once you have copied the command above please press enter to proceed as explained.
  read continuar
@@ -651,16 +658,16 @@ if [[ $insbpmin = "yes" ]]; then
  docker run --restart unless-stopped --platform linux/amd64 --name bitping -it --mount type=bind,source="/root/bitping/",target=/root/.bitping bitping/bitping-node:latest
 else
  if [[ "$APPS" =~ .*"bitping".* ]]; then
-  echo "Do you want to completely remove BitPing? [yes/NO] :"
+  echo "Do you want to completely remove it? [yes/NO] :"
   read desinsbp
   desinsbpmin=$(echo $desinsbp | tr '[:upper:]' '[:lower:]')
   if [[ $desinsbpmin = "yes" ]]; then
-   echo Uninstalling docker image bitping and its updater watchtowerBP...
+   echo Uninstalling docker image bitping and its updater updaterBP...
    docker stop bitping >> $LOG 2>&1
    docker rm bitping >> $LOG 2>&1
    docker rmi bitping/bitping-node:latest >> $LOG 2>&1
-   docker stop watchtowerBP >> $LOG 2>&1
-   docker rm watchtowerBP >> $LOG 2>&1
+   docker stop updaterBP >> $LOG 2>&1
+   docker rm updaterBP >> $LOG 2>&1
    echo Done.
   fi
  fi
