@@ -1,14 +1,14 @@
 # EN
 ## Multicoin Mining Script
-Install, reinstall and/or uninstall 14 apps that reward sharing your connection.
+Install, reinstall and/or uninstall 15 apps that reward sharing your connection, and run them automatically.
 
 Platform: Debian compatible OS on ARM64 architecture and Browan's MerryIoT hotspot.
 
 Languages: English and Spanish.
 
-Supported Apps: [TraffMonetizer](https://traffmonetizer.com/?aff=1042706), [HoneyGain](https://r.honeygain.me/FRANS5CAB4), [EarnApp](https://earnapp.com/i/zJDVLbf9), [Pawns/IPRoyal](https://pawns.app/?r=1262397), [PacketStream](https://packetstream.io/?psr=4tx2), [RePocket](https://link.repocket.co/N6up), [Proxyrack](https://peer.proxyrack.com/ref/zc9zfiz8nlp8of0mk2mujzbll9iv8sd85vvepfdg), [ProxyLite](https://proxylite.ru/?r=VXCFMG4X&utm_source=G), [Mysterium](https://mystnodes.co/?referral_code=qs4DTlbdhLyEsK0QFFVZYZlsY1MRBrbajZqXhZGc), [EarnFM](https://earn.fm/ref/FRAN6E6B), [Filecoin Station](https://www.filstation.app/), [SpeedShare](https://speedshare.app/?ref=Ferran), [Grass](https://app.getgrass.io/register/?referralCode=OleETddLHuKjiki) and [BitPing](https://app.bitping.com?r=hxQvBwhm).
+Supported Apps: [TraffMonetizer](https://traffmonetizer.com/?aff=1042706), [HoneyGain](https://r.honeygain.me/FRANS5CAB4), [EarnApp](https://earnapp.com/i/zJDVLbf9), [Pawns/IPRoyal](https://pawns.app/?r=1262397), [PacketStream](https://packetstream.io/?psr=4tx2), [RePocket](https://link.repocket.co/N6up), [Proxyrack](https://peer.proxyrack.com/ref/zc9zfiz8nlp8of0mk2mujzbll9iv8sd85vvepfdg), [ProxyLite](https://proxylite.ru/?r=VXCFMG4X&utm_source=G), [Mysterium](https://mystnodes.co/?referral_code=qs4DTlbdhLyEsK0QFFVZYZlsY1MRBrbajZqXhZGc), [EarnFM](https://earn.fm/ref/FRAN6E6B), [SpeedShare](https://speedshare.app/?ref=Ferran), [Filecoin Station](https://www.filstation.app/), [Grass](https://app.getgrass.io/register/?referralCode=OleETddLHuKjiki), [Meson](https://meson.network) and [BitPing](https://app.bitping.com?r=hxQvBwhm).
 
-Version: 1.5
+Version: 1.5.1
 
 License: GPL v3
 
@@ -36,15 +36,15 @@ Access the terminal* of your MerryIoT hotspot and run the following commands:
 
 # ES
 ## Script de Minado Multimoneda
-Instala, reinstala y/o desinstala 14 aplicaciones que recompensan compartir Internet.
+Instala, reinstala y/o desinstala 15 aplicaciones que recompensan compartir Internet, y las ejecuta automáticamente.
 
 Plataforma: Sistema Operativo compatible con Debian y arquitectura ARM64 y hotspot MerryIoT de Browan.
 
 Idiomas: Español e Inglés.
 
-Aplicaciones Soportadas: [TraffMonetizer](https://traffmonetizer.com/?aff=1042706), [HoneyGain](https://r.honeygain.me/FRANS5CAB4), [EarnApp](https://earnapp.com/i/zJDVLbf9), [Pawns/IPRoyal](https://pawns.app/?r=1262397), [PacketStream](https://packetstream.io/?psr=4tx2), [RePocket](https://link.repocket.co/N6up), [Proxyrack](https://peer.proxyrack.com/ref/zc9zfiz8nlp8of0mk2mujzbll9iv8sd85vvepfdg), [ProxyLite](https://proxylite.ru/?r=VXCFMG4X&utm_source=G), [Mysterium](https://mystnodes.co/?referral_code=qs4DTlbdhLyEsK0QFFVZYZlsY1MRBrbajZqXhZGc), [EarnFM](https://earn.fm/ref/FRAN6E6B), [Filecoin Station](https://www.filstation.app/), [SpeedShare](https://speedshare.app/?ref=Ferran), [Grass](https://app.getgrass.io/register/?referralCode=OleETddLHuKjiki) y [BitPing](https://app.bitping.com?r=hxQvBwhm).
+Aplicaciones Soportadas: [TraffMonetizer](https://traffmonetizer.com/?aff=1042706), [HoneyGain](https://r.honeygain.me/FRANS5CAB4), [EarnApp](https://earnapp.com/i/zJDVLbf9), [Pawns/IPRoyal](https://pawns.app/?r=1262397), [PacketStream](https://packetstream.io/?psr=4tx2), [RePocket](https://link.repocket.co/N6up), [Proxyrack](https://peer.proxyrack.com/ref/zc9zfiz8nlp8of0mk2mujzbll9iv8sd85vvepfdg), [ProxyLite](https://proxylite.ru/?r=VXCFMG4X&utm_source=G), [Mysterium](https://mystnodes.co/?referral_code=qs4DTlbdhLyEsK0QFFVZYZlsY1MRBrbajZqXhZGc), [EarnFM](https://earn.fm/ref/FRAN6E6B), [SpeedShare](https://speedshare.app/?ref=Ferran), [Filecoin Station](https://www.filstation.app/), [Grass](https://app.getgrass.io/register/?referralCode=OleETddLHuKjiki), [Meson](https://meson.network) y [BitPing](https://app.bitping.com?r=hxQvBwhm).
 
-Versión: 1.5
+Versión: 1.5.1
 
 Licencia: GPL v3
 
