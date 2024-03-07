@@ -589,7 +589,7 @@ if [[ $insssmin = "yes" ]]; then
  fi
  wget -qO- https://api.speedshare.app/download/linux/cli/arm64 > /usr/local/bin/speedshare
  chmod +x /usr/local/bin/speedshare
- /usr/local/bin/speedshare connect --pairing_code "$authcode" >> $LOG 2>&1 & disown
+ /usr/local/bin/speedshare connect --pairing_code "$authcode" >> $LOG 2>&1 &
 cp -a /etc/rc.local /etc/rc.local.ORIG >> $LOG 2>&1
  grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
  grep -F -v speedshare /etc/rc.local.AUX > /etc/rc.local.OK
