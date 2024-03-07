@@ -5,7 +5,7 @@
 # Grass, Meson and MASQ* are in Testnet phase without real payments yet.
 # Streamr and Presearch* require to invest -or stake- a significant amount to receive rewards.
 # *In future versions, also the ones without linux support yet: bytelixir.com/r/Z0FR2SD6FECW , cashraven.io , spider.com , community.theta.tv/theta-edge-node , nodle.com
-# Version: 1.5.1
+# Version: 1.5.2
 # License: GPLv3
 #
 
