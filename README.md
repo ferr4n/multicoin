@@ -49,7 +49,7 @@ Versión: 1.5.3
 Licencia: GPL v3
 
 ### Instrucciones para Debian ARM64
-Accede al terminal de tu computadora ARM64 con Debian o derivado (por ejemplo Raspberry Pi) y ejecuta los siguientes comandos:
+Acceda al terminal de su computadora ARM64 con Debian o derivado (por ejemplo Raspberry Pi) y ejecute los siguientes comandos:
 
 1. `wget -qO- https://github.com/ferr4n/multicoin/blob/multimoneda_merryiot.sh > /tmp/multimoneda_merryiot.sh`
 
@@ -57,15 +57,15 @@ Accede al terminal de tu computadora ARM64 con Debian o derivado (por ejemplo Ra
 
 2b. Como root: `bash /tmp/multimoneda_deb_arm64.sh`
 
-3. Sigue las indicaciones en pantalla.
+3. Siga las indicaciones en pantalla.
 
 ### Instrucciones para el hotspot de Browan MerryIoT
-Accede* al terminal del hotspot MerryIoT y ejecuta los siguientes comandos:
+Acceda** al terminal del hotspot MerryIoT y ejecute los siguientes comandos:
 
 1. `wget -qO- https://github.com/ferr4n/multicoin/blob/multimoneda_merryiot.sh > /tmp/multimoneda_merryiot.sh`
 
 2. `bash /tmp/multimoneda_merryiot.sh`
 
-3. Sigue las indicaciones en pantalla.
+3. Siga las indicaciones en pantalla.
 
 ** Puede ganar acceso SSH como root siguiendo los [pasos de esta guía](https://telegra.ph/Activar-SSH-con-BCFU-en-Browan-MerryIoT-02-17)
