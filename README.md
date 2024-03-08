@@ -68,4 +68,4 @@ Accede* al terminal del hotspot MerryIoT y ejecuta los siguientes comandos:
 
 3. Sigue las indicaciones en pantalla.
 
-*** Puede ganar acceso SSH como root siguiendo los [pasos de esta guía](https://telegra.ph/Activar-SSH-con-BCFU-en-Browan-MerryIoT-02-17)
+** Puede ganar acceso SSH como root siguiendo los [pasos de esta guía](https://telegra.ph/Activar-SSH-con-BCFU-en-Browan-MerryIoT-02-17)
