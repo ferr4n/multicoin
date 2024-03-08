@@ -5,7 +5,7 @@
 # Grass, Meson, MASQ* están en fase Testnet: aun sin pagos reales.
 # Streamr y Presearch* requieren comprar una cantidad significativa de tokens para recibir beneficios.
 # *En futuras versiones, junto con las que aun no están en linux: bytelixir.com/r/Z0FR2SD6FECW , cashraven.io , spider.com , community.theta.tv/theta-edge-node , nodle.com
-# Versión: 1.5.3
+# Versión: 1.5.4
 # Licencia: GPLv3
 #
 
@@ -154,7 +154,7 @@ if [[ $inshgmin = "si" ]]; then
  fi
  nombremin=$(echo $nombre | tr '[:upper:]' '[:lower:]')
  echo Instalando imagen de docker honeygain con el email $emailhg y la clave $passhg y actualizador updaterHG...
- cp -a /etc/rc.local /etc/rc.local.ORIG >> $LOG 2>&1
+ cp -a /etc/rc.local /etc/rc.local.BACKUP.HG >> $LOG 2>&1
  grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
  grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
  rm -f /etc/rc.local.AUX >> $LOG 2>&1
@@ -291,7 +291,7 @@ if [[ $inspsmin = "si" ]]; then
   exit 0
  fi
  echo Instalando imagen de docker packetstream con el CID $cidps y actualizador updaterPS...
- cp -a /etc/rc.local /etc/rc.local.BACK.PR >> $LOG 2>&1
+ cp -a /etc/rc.local /etc/rc.local.BACKUP.PS >> $LOG 2>&1
  grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
  grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
  rm -f /etc/rc.local.AUX >> $LOG 2>&1
@@ -388,7 +388,7 @@ if [[ $insprmin = "si" ]]; then
  echo Cuando lo haya hecho pulse enter para continuar.
  read continuar
  echo Instalando imagen de docker proxyrack y actualizador updaterPR...
- cp -a /etc/rc.local /etc/rc.local.BACK.PR >> $LOG 2>&1
+ cp -a /etc/rc.local /etc/rc.local.BACKUP.PR >> $LOG 2>&1
  grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
  grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
  rm -f /etc/rc.local.AUX >> $LOG 2>&1
@@ -443,7 +443,7 @@ if [[ $insplmin = "si" ]]; then
   exit 0
  fi
  echo Instalando imagen de docker proxylite con el ID $idpl y actualizador updaterPL...
- cp -a /etc/rc.local /etc/rc.local.ORIG >> $LOG 2>&1
+ cp -a /etc/rc.local /etc/rc.local.BACKUP.PL >> $LOG 2>&1
  grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
  grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
  rm -f /etc/rc.local.AUX >> $LOG 2>&1
@@ -828,7 +828,7 @@ if [[ $insbpmin = "si" ]]; then
  echo Cuando lo haya hecho pulse enter para continuar.
  read continuar
  echo Instalando imagen de docker bitping y actualizador updaterBP...
- cp -a /etc/rc.local /etc/rc.local.BACK.BP >> $LOG 2>&1
+ cp -a /etc/rc.local /etc/rc.local.BACKUP.BP >> $LOG 2>&1
  grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
  grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
  rm -f /etc/rc.local.AUX >> $LOG 2>&1
