@@ -5,7 +5,7 @@
 # Grass, Meson, MASQ* están en fase Testnet: aun sin pagos reales.
 # Streamr y Presearch* requieren comprar una cantidad significativa de tokens para recibir beneficios.
 # *En futuras versiones, junto con las que aun no están en linux: bytelixir.com/r/Z0FR2SD6FECW , cashraven.io , spider.com , community.theta.tv/theta-edge-node , nodle.com
-# Versión: 1.5.3
+# Versión: 1.5.4
 # Licencia: GPLv3
 #
 
@@ -51,6 +51,29 @@ if [ ! -e /etc/docker/daemon.json ]; then
 }
 EOF
 fi
+if [ ! -e /usr/local/sbin/multiple_miner-launcher.sh ]; then
+ echo Creando lanzador de multimonedas
+ cp -a /lib/systemd/system/multiple_miner.service /lib/systemd/system/multiple_miner.service.ORIG
+ cat <<EOF >/lib/systemd/system/multiple_miner.service
+[Unit]
+Description=Multiple miner one shot every booting
+After=wifi_init.service bluetooth_loadFW.service docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/multiple_miner-launcher.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+ cat <<EOF >/usr/local/sbin/multiple_miner-launcher.sh
+#!/bin/sh
+/usr/local/sbin/multiple_miner.sh launch
+EOF
+chmod +x /usr/local/sbin/multiple_miner-launcher.sh
+fi
+
 echo Actualizando los paquetes con apt, esto puede tardar...
 apt update >> $LOG 2>&1
 apt --purge full-upgrade -y >> $LOG 2>&1
@@ -134,14 +157,10 @@ if [[ $inspsmin = "si" ]]; then
   exit 0
  fi
  echo Instalando imagen de docker packetstream con el CID $cidps y actualizador updaterPS...
- cp -a /etc/rc.local /etc/rc.local.BACK.PR >> $LOG 2>&1
- grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
- grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
- rm -f /etc/rc.local.AUX >> $LOG 2>&1
- echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64 &' >> /etc/rc.local.OK
- echo 'exit 0' >> /etc/rc.local.OK
- chmod +x /etc/rc.local.OK >> $LOG 2>&1
- cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
+ cp -a /usr/local/sbin/multiple_miner-launcher.sh /usr/local/sbin/multiple_miner-launcher.sh.ORIG >> $LOG 2>&1
+ grep -F -v tonistiigi /usr/local/sbin/multiple_miner-launcher.sh > /usr/local/sbin/multiple_miner-launcher.sh.OK
+ echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64 &' >> /usr/local/sbin/multiple_miner-launcher.sh.OK
+ cp -a /usr/local/sbin/multiple_miner-launcher.sh.OK /usr/local/sbin/multiple_miner-launcher.sh >> $LOG 2>&1
  docker run --privileged --rm tonistiigi/binfmt --install amd64 >> $LOG 2>&1
  docker stop packetstream >> $LOG 2>&1
  docker rm packetstream >> $LOG 2>&1
@@ -231,14 +250,10 @@ if [[ $insprmin = "si" ]]; then
  echo Cuando lo haya hecho pulse enter para continuar.
  read continuar
  echo Instalando imagen de docker proxyrack y actualizador updaterPR...
- cp -a /etc/rc.local /etc/rc.local.BACK.PR >> $LOG 2>&1
- grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
- grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
- rm -f /etc/rc.local.AUX >> $LOG 2>&1
- echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64 &' >> /etc/rc.local.OK
- echo 'exit 0' >> /etc/rc.local.OK
- chmod +x /etc/rc.local.OK >> $LOG 2>&1
- cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
+ cp -a /usr/local/sbin/multiple_miner-launcher.sh /usr/local/sbin/multiple_miner-launcher.sh.ORIG >> $LOG 2>&1
+ grep -F -v tonistiigi /usr/local/sbin/multiple_miner-launcher.sh > /usr/local/sbin/multiple_miner-launcher.sh.OK
+ echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64 &' >> /usr/local/sbin/multiple_miner-launcher.sh.OK
+ cp -a /usr/local/sbin/multiple_miner-launcher.sh.OK /usr/local/sbin/multiple_miner-launcher.sh >> $LOG 2>&1
  docker run --privileged --rm tonistiigi/binfmt --install amd64 >> $LOG 2>&1
  docker stop proxyrack >> $LOG 2>&1
  docker rm proxyrack >> $LOG 2>&1
@@ -286,14 +301,10 @@ if [[ $insplmin = "si" ]]; then
   exit 0
  fi
  echo Instalando imagen de docker proxylite con el ID $idpl y actualizador updaterPL...
- cp -a /etc/rc.local /etc/rc.local.ORIG >> $LOG 2>&1
- grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
- grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
- rm -f /etc/rc.local.AUX >> $LOG 2>&1
- echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
- echo 'exit 0' >> /etc/rc.local.OK
- chmod +x /etc/rc.local.OK >> $LOG 2>&1
- cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
+ cp -a /usr/local/sbin/multiple_miner-launcher.sh /usr/local/sbin/multiple_miner-launcher.sh.ORIG >> $LOG 2>&1
+ grep -F -v tonistiigi /usr/local/sbin/multiple_miner-launcher.sh > /usr/local/sbin/multiple_miner-launcher.sh.OK
+ echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64 &' >> /usr/local/sbin/multiple_miner-launcher.sh.OK
+ cp -a /usr/local/sbin/multiple_miner-launcher.sh.OK /usr/local/sbin/multiple_miner-launcher.sh >> $LOG 2>&1
  docker run --privileged --rm tonistiigi/binfmt --install amd64 >> $LOG 2>&1
  docker stop proxylite >> $LOG 2>&1
  docker rm proxylite >> $LOG 2>&1
@@ -389,14 +400,10 @@ if [[ $insssmin = "si" ]]; then
  wget -qO- https://api.speedshare.app/download/linux/cli/arm64 > /usr/local/bin/speedshare
  chmod +x /usr/local/bin/speedshare
  /usr/local/bin/speedshare connect --pairing_code "$authcode" >> $LOG 2>&1 &
- cp -a /etc/rc.local /etc/rc.local.ORIG >> $LOG 2>&1
- grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
- grep -F -v speedshare /etc/rc.local.AUX > /etc/rc.local.OK
- rm -f /etc/rc.local.AUX >> $LOG 2>&1
- echo 'speedshare connect --pairing_code $authcode' >> /etc/rc.local.OK
- echo 'exit 0' >> /etc/rc.local.OK
- chmod +x /etc/rc.local.OK >> $LOG 2>&1
- cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
+ cp -a /usr/local/sbin/multiple_miner-launcher.sh /usr/local/sbin/multiple_miner-launcher.sh.ORIG >> $LOG 2>&1
+ grep -F -v speedshare /usr/local/sbin/multiple_miner-launcher.sh > /usr/local/sbin/multiple_miner-launcher.sh.OK
+ echo '/usr/local/bin/speedshare connect --pairing_code $authcode &' >> /usr/local/sbin/multiple_miner-launcher.sh.OK
+ cp -a /usr/local/sbin/multiple_miner-launcher.sh.OK /usr/local/sbin/multiple_miner-launcher.sh >> $LOG 2>&1
  echo SpeedShare instalado y funcionando.
 else
  if [[ "$APPS" =~ .*"speedshare".* ]]; then
@@ -628,14 +635,10 @@ if [[ $insbpmin = "si" ]]; then
  echo Cuando lo haya hecho pulse enter para continuar.
  read continuar
  echo Instalando imagen de docker bitping y actualizador updaterBP...
- cp -a /etc/rc.local /etc/rc.local.BACK.BP >> $LOG 2>&1
- grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
- grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
- rm -f /etc/rc.local.AUX >> $LOG 2>&1
- echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64 &' >> /etc/rc.local.OK
- echo 'exit 0' >> /etc/rc.local.OK
- chmod +x /etc/rc.local.OK >> $LOG 2>&1
- cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
+ cp -a /usr/local/sbin/multiple_miner-launcher.sh /usr/local/sbin/multiple_miner-launcher.sh.ORIG >> $LOG 2>&1
+ grep -F -v tonistiigi /usr/local/sbin/multiple_miner-launcher.sh > /usr/local/sbin/multiple_miner-launcher.sh.OK
+ echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64 &' >> /usr/local/sbin/multiple_miner-launcher.sh.OK
+ cp -a /usr/local/sbin/multiple_miner-launcher.sh.OK /usr/local/sbin/multiple_miner-launcher.sh >> $LOG 2>&1
  docker run --privileged --rm tonistiigi/binfmt --install amd64 >> $LOG 2>&1
  docker stop updaterBP >> $LOG 2>&1
  docker rm updaterBP >> $LOG 2>&1
