@@ -5,7 +5,7 @@
 # Grass, Meson and MASQ* are in Testnet phase without real payments yet.
 # Streamr and Presearch* require to invest -or stake- a significant amount to receive rewards.
 # *In future versions, also the ones without linux support yet: bytelixir.com/r/Z0FR2SD6FECW , cashraven.io , spider.com , community.theta.tv/theta-edge-node , nodle.com
-# Version: 1.5.2
+# Version: 1.5.3
 # License: GPLv3
 #
 
@@ -121,7 +121,7 @@ else
    echo Uninstalling docker image traffmonetizer and its updater updaterTM...
    docker stop traffmonetizer >> $LOG 2>&1
    docker rm traffmonetizer >> $LOG 2>&1
-   docker rmi traffmonetizer/cli_v2:arm64v8  >> $LOG 2>&1
+   docker rmi traffmonetizer/cli_v2:arm64v8 >> $LOG 2>&1
    docker stop updaterTM >> $LOG 2>&1
    docker rm updaterTM >> $LOG 2>&1
    echo Done.
@@ -159,11 +159,11 @@ if [[ $inshgmin = "yes" ]]; then
  grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
  grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
  rm -f /etc/rc.local.AUX >> $LOG 2>&1
- echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
+ echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64 &' >> /etc/rc.local.OK
  echo 'exit 0' >> /etc/rc.local.OK
  chmod +x /etc/rc.local.OK >> $LOG 2>&1
  cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
- docker run --privileged --rm tonistiigi/binfmt --install amd64  >> $LOG 2>&1
+ docker run --privileged --rm tonistiigi/binfmt --install amd64 >> $LOG 2>&1
  docker stop honeygain >> $LOG 2>&1
  docker rm honeygain >> $LOG 2>&1
  docker run -d --restart unless-stopped --platform linux/amd64 --name honeygain honeygain/honeygain -tou-accept -email $emailhg -pass $passhg -device $namemin >> $LOG 2>&1
@@ -296,9 +296,9 @@ if [[ $inspsmin = "yes" ]]; then
  grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
  grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
  rm -f /etc/rc.local.AUX >> $LOG 2>&1
- echo 'docker run --privileged --rm  tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
+ echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64 &' >> /etc/rc.local.OK
  echo 'exit 0' >> /etc/rc.local.OK
- chmod +x /etc/rc.local.OK > $LOG  2>&1
+ chmod +x /etc/rc.local.OK > $LOG 2>&1
  cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
  docker run --privileged --rm tonistiigi/binfmt --install amd64 >> $LOG 2>&1
  docker stop packetstream >> $LOG 2>&1
@@ -393,7 +393,7 @@ if [[ $insprmin = "yes" ]]; then
  grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
  grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
  rm -f /etc/rc.local.AUX >> $LOG 2>&1
- echo 'docker run --privileged --rm  tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
+ echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64 &' >> /etc/rc.local.OK
  echo 'exit 0' >> /etc/rc.local.OK
  chmod +x /etc/rc.local.OK >> $LOG 2>&1
  cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
@@ -448,17 +448,17 @@ if [[ $insplmin = "yes" ]]; then
  grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
  grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
  rm -f /etc/rc.local.AUX >> $LOG 2>&1
- echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
+ echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64 &' >> /etc/rc.local.OK
  echo 'exit 0' >> /etc/rc.local.OK
  chmod +x /etc/rc.local.OK >> $LOG 2>&1
  cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
- docker run --privileged --rm tonistiigi/binfmt --install amd64  >> $LOG 2>&1
- docker stop proxylite  >> $LOG 2>&1
- docker rm proxylite  >> $LOG 2>&1
+ docker run --privileged --rm tonistiigi/binfmt --install amd64 >> $LOG 2>&1
+ docker stop proxylite >> $LOG 2>&1
+ docker rm proxylite >> $LOG 2>&1
  docker run -de "USER_ID=$idpl" --restart unless-stopped --platform linux/amd64 --name proxylite proxylite/proxyservice >> $LOG 2>&1
- docker stop updaterPL  >> $LOG 2>&1
- docker rm updaterPL  >> $LOG 2>&1
- docker run -d --name updaterPL --restart=unless-stopped -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower proxylite updaterPL --cleanup --include-stopped --include-restarting --revive-stopped  --scope proxylite --interval 86420  >> $LOG 2>&1
+ docker stop updaterPL >> $LOG 2>&1
+ docker rm updaterPL >> $LOG 2>&1
+ docker run -d --name updaterPL --restart=unless-stopped -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower proxylite updaterPL --cleanup --include-stopped --include-restarting --revive-stopped --scope proxylite --interval 86420 >> $LOG 2>&1
  echo ProxyLite installed and running.
 else
  if [[ "$APPS" =~ .*"proxylite".* ]]; then
@@ -835,11 +835,11 @@ if [[ $insbpmin = "yes" ]]; then
  grep -F -v exit /etc/rc.local > /etc/rc.local.AUX
  grep -F -v tonistiigi /etc/rc.local.AUX > /etc/rc.local.OK
  rm -f /etc/rc.local.AUX >> $LOG 2>&1
- echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64' >> /etc/rc.local.OK
+ echo 'docker run --privileged --rm tonistiigi/binfmt --install amd64 &' >> /etc/rc.local.OK
  echo 'exit 0' >> /etc/rc.local.OK
  chmod +x /etc/rc.local.OK >> $LOG 2>&1
  cp -a /etc/rc.local.OK /etc/rc.local >> $LOG 2>&1
- docker run --privileged --rm tonistiigi/binfmt --install amd64  >> $LOG 2>&1
+ docker run --privileged --rm tonistiigi/binfmt --install amd64 >> $LOG 2>&1
  docker stop updaterBP >> $LOG 2>&1
  docker rm updaterBP >> $LOG 2>&1
  docker run -d --restart unless-stopped --name updaterBP -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower bitping updaterBP --cleanup --include-stopped --include-restarting --revive-stopped --interval 86500 --scope bitping >> $LOG 2>&1
