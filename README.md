@@ -15,7 +15,7 @@ License: GPL v3
 ### Instructions for Debian ARM64
 Access the terminal of your ARM64 Debian-based computer (e.g. Raspberry Pi) and run the following commands:
 
-1. `wget -qO- https://github.com/ferr4n/multicoin/blob/multicoin_deb_arm64.sh > /tmp/multicoin_deb_arm64.sh`
+1. `wget -qO- https://raw.githubusercontent.com/ferr4n/multicoin/main/multicoin_deb_arm64.sh > /tmp/multicoin_deb_arm64.sh`
 
 2a. As user with sudo: `sudo bash /tmp/multicoin_deb_arm64.sh`
 
@@ -26,7 +26,7 @@ Access the terminal of your ARM64 Debian-based computer (e.g. Raspberry Pi) and 
 ### Instructions for Browan's MerryIoT hotspot
 Access the terminal* of your MerryIoT hotspot and run the following commands:
 
-1. `wget -qO- https://github.com/ferr4n/multicoin/blob/multicoin_merryiot.sh > /tmp/multicoin_merryiot.sh`
+1. `wget -qO- https://raw.githubusercontent.com/ferr4n/multicoin/main/multicoin_merryiot.sh > /tmp/multicoin_merryiot.sh`
 
 2. `bash /tmp/multicoin_merryiot.sh`
 
@@ -62,7 +62,7 @@ Acceda al terminal de su computadora ARM64 con Debian o derivado (por ejemplo Ra
 ### Instrucciones para el hotspot de Browan MerryIoT
 Acceda** al terminal del hotspot MerryIoT y ejecute los siguientes comandos:
 
-1. `wget -qO- https://github.com/ferr4n/multicoin/blob/multimoneda_merryiot.sh > /tmp/multimoneda_merryiot.sh`
+1. `wget -qO- https://raw.githubusercontent.com/ferr4n/multicoin/main/multimoneda_merryiot.sh > /tmp/multimoneda_merryiot.sh`
 
 2. `bash /tmp/multimoneda_merryiot.sh`
 
