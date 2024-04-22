@@ -51,9 +51,9 @@ Licencia: GPL v3
 ### Instrucciones para Debian ARM64
 Acceda al terminal de su computadora ARM64 con Debian o derivado (por ejemplo Raspberry Pi) y ejecute los siguientes comandos:
 
-1. `wget -qO- https://github.com/ferr4n/multicoin/blob/multimoneda_merryiot.sh > /tmp/multimoneda_merryiot.sh`
+1. `wget -qO- https://raw.githubusercontent.com/ferr4n/multicoin/main/multimoneda_deb_arm64.sh > /tmp/multimoneda_deb_arm64.sh`
 
-2a. Como usuario con sudo: `sudo bash /tmp/multimoneda_merryiot.sh`
+2a. Como usuario con sudo: `sudo bash /tmp/multimoneda_deb_arm64.sh`
 
 2b. Como root: `bash /tmp/multimoneda_deb_arm64.sh`
 
