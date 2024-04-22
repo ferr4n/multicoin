@@ -57,7 +57,7 @@ if [ ! -e /etc/docker/daemon.json ]; then
 EOF
 fi
 if [ ! -e /etc/dphys-swapfile ]; then
- echo Inscreasing dphys swap size to 4 GB (max. 8 GB)
+ echo "Increasing dphys swap size to 4 GB (max. 8 GB)"
  cp -a /etc/dphys-swapfile /etc/dphys-swapfile.ORIG
  cat <<EOF >/etc/dphys-swapfile
 CONF_SWAPSIZE=4096
